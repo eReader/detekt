@@ -10,6 +10,10 @@ from utils import get_resource
 TEMPLATE_PATH.insert(0, get_resource('gui'))
 webapp = Bottle()
 
+@webapp.route('/static/<path:path>')
+def static(path):
+    return static_file(path, get_resource('gui/static/'))
+
 @webapp.route('/')
 def index():
     return template('index')
@@ -19,7 +23,7 @@ class WebApp(QThread):
         QThread.__init__(self)
 
     def run(self):
-        run(webapp, host='localhost', port=31337, quiet=True)
+        run(webapp, host='localhost', port=31337)#, quiet=True)
 
 class Window(QWebView):
     def __init__(self):
