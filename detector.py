@@ -60,8 +60,10 @@ def scan(service_path, profile_name):
     # on how to proceed from here.
     if len(matched) > 0:
         critical(messages.INFECTION_FOUND)
+        return True
     else:
         good(messages.NO_INFECTION_FOUND)
+        return False
 
 def main():
     multiprocessing.freeze_support()
@@ -108,7 +110,7 @@ def main():
         #scanner = multiprocessing.Process(target=scan, args=(cfg.service_path, cfg.profile))
         #scanner.start()
         #scanner.join()
-        scan(cfg.service_path, cfg.profile)
+        infected = scan(cfg.service_path, cfg.profile)
     except DetectorError as e:
         log.critical(e)
         error(messages.SCAN_FAILED)
@@ -126,6 +128,9 @@ def main():
         return
     else:
         log.info("Service stopped")
+
+    # XXX: Just for testing.
+    infected = True
 
 if __name__ == "__main__":
     # TODO: Add argparse options to download updated yara signatures?

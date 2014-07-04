@@ -34,7 +34,7 @@ def check():
     if scanner.isAlive():
         return template('index', action='running')
     else:
-        return template('index', action='results')
+        return template('index', action='results', infected=True)
 
 class WebApp(QThread):
     def __init__(self):
