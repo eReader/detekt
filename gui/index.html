@@ -11,10 +11,27 @@
             </div>
         </div>
 
-        <p>
-            <button type="button" class="btn btn-primary btn-block">Scan</button>
-        </p>
+        % if action == 'start':
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><strong>What is this?</strong></h3>
+            </div>
+            <div class="panel-body">
+                This is a simple tool that tries to identify potential spyware infections on your computer.
+                When launched, it will try to look for certain indicators in memory. If you have any running applications (such as Skype, the browser, etc.) please close them in order to increase performance and decrease chances of false positives. The execution will take some minutes, so please be patient.
+            </div>
+        </div>
 
+        <p>
+            <a class="btn btn-lg btn-primary btn-block" href="/scan">Scan now!</a>
+        </p>
+        % end
+
+        % if action == 'scan':
+            Scanning
+        % end
+
+        % if action == 'results':
         <div class="alert alert-success">
             <h4>Looks good :-)</h4>
             I wasn't able to identify the presence of any obvious spyware. Please note that this does not necessarily mean your computer is clean. If you have strong suspicion of being targeted, please do seek assistance nevertheless.
@@ -24,6 +41,7 @@
             <h4>DANGER!</h4>
             I managed to identify the potential presence of some spyware. You should turn off this computer, never connect it again to the Internet or any external device and seek assistance.
         </div>
+        % end
 
         <div style="text-align: center;"><small>created by <strong>Claudio Guarnieri</strong></small></div>
     </div>

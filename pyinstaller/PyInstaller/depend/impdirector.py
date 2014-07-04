@@ -1,29 +1,22 @@
+#-----------------------------------------------------------------------------
+# Copyright (c) 2013, PyInstaller Development Team.
 #
-# Copyright (C) 2005, Giovanni Bajo
+# Distributed under the terms of the GNU General Public License with exception
+# for distributing bootloader.
 #
-# Based on previous work under copyright (c) 2002 McMillan Enterprises, Inc.
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+# The full license is in the file COPYING.txt, distributed with this software.
+#-----------------------------------------------------------------------------
 
 
-# ImportDirectors live on the metapath.
-# There's one for builtins and one for sys.path.
-# Windows gets one for modules gotten from the Registry
-# There should be one for Frozen modules
-# Mac would have them for PY_RESOURCE modules etc.
-# A generalization of Owner - their concept of "turf" is broader
+"""
+ImportDirectors live on the metapath.
+There's one for builtins and one for sys.path.
+Windows gets one for modules gotten from the Registry
+There should be one for Frozen modules
+Mac would have them for PY_RESOURCE modules etc.
+A generalization of Owner - their concept of "turf" is broader
+"""
+
 
 import os
 import sys
@@ -31,12 +24,13 @@ import imp
 import marshal
 
 from PyInstaller import depend
-from PyInstaller.compat import set
+
 
 import PyInstaller.depend.owner
 import PyInstaller.log as logging
 
-logger = logging.getLogger('PyInstaller.build.mf')
+
+logger = logging.getLogger(__name__)
 
 
 def getDescr(fnm):
@@ -46,13 +40,13 @@ def getDescr(fnm):
             return (suffix, mode, typ)
 
 
-class ImportDirector(PyInstaller.depend.owner.Owner):
-    pass
+class ImportDirector():
+    def __str__(self):
+        return self.path
 
 
 class BuiltinImportDirector(ImportDirector):
-    def __init__(self):
-        self.path = 'Builtins'
+    path = 'Builtins'
 
     def getmod(self, nm, isbuiltin=imp.is_builtin):
         if isbuiltin(nm):
@@ -61,9 +55,10 @@ class BuiltinImportDirector(ImportDirector):
 
 
 class RegistryImportDirector(ImportDirector):
+    path = "WindowsRegistry"
+
     # for Windows only
     def __init__(self):
-        self.path = "WindowsRegistry"
         self.map = {}
         try:
             import win32api
@@ -168,3 +163,21 @@ class PathImportDirector(ImportDirector):
                 break
         self.building.remove(path)
         return owner
+
+
+class NamespaceImportDirector(ImportDirector):
+    """
+    Currently only supports namespaces built by `-nspkg.pth`-style
+    mechanisms, as used by e.g. zop.interface.
+    """
+
+    path = 'Namespace'
+
+    def getmod(self, nm):
+        if nm in sys.modules:
+            # the module is in sys.modules, but was not found by any
+            # of the other ImportDirectors. So it is not builtin, and
+            # does not live on any of the pathes. Still it exists. So
+            # we assume it is a namespace-package.
+            pth = sys.modules[nm].__path__
+            return depend.modules.NamespaceModule(nm, pth)

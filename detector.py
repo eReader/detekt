@@ -25,7 +25,7 @@ def scan(service_path, profile_name):
     sess = session.Session(filename=service_path, profile=profile_name)
 
     # Find Yara signatures, if file is not available, we need to terminate.
-    yara_path = get_resource('signatures.yara')
+    yara_path = get_resource(os.path.join('rules', 'signatures.yar'))
     if not os.path.exists(yara_path):
         raise DetectorError("Unable to find signatures file!")
 
@@ -76,8 +76,8 @@ def main():
     if cfg.offline_check:
         if ctypes.windll.wininet.InternetGetConnectedState(None, None):
             warning(messages.ONLINE)
-            if not dialog(messages.CONTINUE):
-                return
+            #if not dialog(messages.CONTINUE):
+            #    return
 
     # Check if this is a supported version of Windows and if so, obtain the
     # volatility profile name.
@@ -115,9 +115,10 @@ def main():
         # However this doesn't allow me to do proper reporting of the results
         # as I can't easily pass data from one instance to the other.
         # TODO: fix this shit.
-        scanner = multiprocessing.Process(target=scan, args=(cfg.service_path, cfg.profile))
-        scanner.start()
-        scanner.join()
+        #scanner = multiprocessing.Process(target=scan, args=(cfg.service_path, cfg.profile))
+        #scanner.start()
+        #scanner.join()
+        scan(cfg.service_path, cfg.profile)
     except DetectorError as e:
         log.critical(e)
         error(messages.SCAN_FAILED)

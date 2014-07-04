@@ -36,10 +36,10 @@ class Config(object):
 
         if self.architecture == 'x64':
             # Select 64 bit driver.
-            self.driver = get_resource('winpmem64.sys')
+            self.driver = get_resource(os.path.join('drivers', 'winpmem64.sys'))
         elif self.architecture == 'x86':
             # Delect 32 bit driver.
-            self.driver = get_resource('winpmem32.sys')
+            self.driver = get_resource(os.path.join('drivers', 'winpmem32.sys'))
 
         if self.driver and os.path.exists(self.driver):
             return True
