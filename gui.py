@@ -6,11 +6,14 @@ from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
 
 from lib.bottle import *
-from utils import get_resource
+from utils import get_resource, check_connection
 import detector
 
 TEMPLATE_PATH.insert(0, get_resource('gui'))
 webapp = Bottle()
+
+scanner = threading.Thread(target=detector.main)
+scanner.daemon = True
 
 @webapp.route('/static/<path:path>')
 def static(path):
@@ -18,14 +21,20 @@ def static(path):
 
 @webapp.route('/')
 def index():
-    return template('index', action='start')
+    connection = check_connection()
+    return template('index', action='start', connection=connection)
 
 @webapp.route('/scan')
 def scan():
-    scanner = threading.Thread(target=detector.main)
-    scanner.daemon = True
     scanner.start()
-    return template('index', action='scan')
+    return template('index', action='running')
+
+@webapp.route('/check')
+def check():
+    if scanner.isAlive():
+        return template('index', action='running')
+    else:
+        return template('index', action='results')
 
 class WebApp(QThread):
     def __init__(self):

@@ -4,13 +4,10 @@ import platform
 
 from utils import get_resource
 
-OFFLINE_CHECK = True
-
 class Config(object):
     # TODO: Make Singleton?
 
     def __init__(self):
-        self.offline_check = OFFLINE_CHECK
         self.architecture = ''
         self.driver = ''
         self.profile = ''

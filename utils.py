@@ -1,6 +1,6 @@
 import os
 import sys
-#import ctypes
+import ctypes
 
 def get_resource(relative):
     # First try from the local directory. This might come handy in case we want
@@ -18,3 +18,11 @@ def get_resource(relative):
 # which language to use for logging messages.
 #def get_language():
 #    return ctypes.windll.kernel32.GetUserDefaultUILanguage()
+
+def check_connection():
+    # Check if there is an active Internet connection.
+    # This might not be 100% reliable.
+    if ctypes.windll.wininet.InternetGetConnectedState(None, None):
+        return True
+    else:
+        return False

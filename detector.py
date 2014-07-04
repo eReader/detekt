@@ -1,6 +1,5 @@
 import os
 import time
-import ctypes
 import logging
 import multiprocessing
 from volatility import session
@@ -69,15 +68,6 @@ def main():
 
     # Generate configuration values.
     cfg = Config()
-
-    # Check if the computer is connected to the Internet or any other network.
-    # We don't want the user to be connected while running the tool, both for
-    # protecting their safety as well as our rules.
-    if cfg.offline_check:
-        if ctypes.windll.wininet.InternetGetConnectedState(None, None):
-            warning(messages.ONLINE)
-            #if not dialog(messages.CONTINUE):
-            #    return
 
     # Check if this is a supported version of Windows and if so, obtain the
     # volatility profile name.
