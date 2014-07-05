@@ -1,7 +1,6 @@
 import os
 import time
 import logging
-import multiprocessing
 from volatility import session
 from volatility import plugins
 from volatility import utils
@@ -63,8 +62,6 @@ def scan(service_path, profile_name, queue_results):
         return False
 
 def main(queue_results, queue_errors):
-    multiprocessing.freeze_support()
-
     # Generate configuration values.
     cfg = Config()
 
@@ -97,16 +94,6 @@ def main(queue_results, queue_errors):
 
     # Launch the scanner.
     try:
-        # This is so fucking annoying - I have to use multiprocessing because
-        # for some reason yarascan does not close the handle to the device and
-        # consequently I cannot stop and delete it.
-        # As I don't want to leave traces on the system, I have to go this way.
-        # However this doesn't allow me to do proper reporting of the results
-        # as I can't easily pass data from one instance to the other.
-        # TODO: fix this shit.
-        #scanner = multiprocessing.Process(target=scan, args=(cfg.service_path, cfg.profile))
-        #scanner.start()
-        #scanner.join()
         scan(cfg.service_path, cfg.profile, queue_results)
     except DetectorError as e:
         log.critical(e)
