@@ -18,7 +18,7 @@ log.propagate = 0
 log.addHandler(logging.FileHandler(os.path.join(os.getcwd(), 'detector.log')))
 log.setLevel(logging.INFO)
 
-def scan(service_path, profile_name):
+def scan(service_path, profile_name, queue_results):
     # Initialize Volatility session and specify path to the winpmem service
     # and the detected profile name.
     sess = session.Session(filename=service_path, profile=profile_name)
@@ -31,8 +31,6 @@ def scan(service_path, profile_name):
     # Load the yarascan plugin from Volatility. We pass it the index file which
     # is used to load the different rulesets.
     yara_plugin = sess.plugins.yarascan(yara_file=yara_path)
-
-    print(messages.SCAN_STARTING)
 
     # This ia a list used to track which rule gets matched. I'm going to
     # store the details for each unique rule only.
@@ -54,18 +52,17 @@ def scan(service_path, profile_name):
 
             log.warning("Matched: %s [0x%.08x]: %s\n\n%s", rule, address, value, rule_data)
 
-    print(messages.SCAN_FINISHED)
+            # Add match to the resuts queue.
+            queue_results.put({'rule' : rule, 'address' : address, 'value' : value})
 
     # If any rule gets matched, we need to notify the user and instruct him
     # on how to proceed from here.
     if len(matched) > 0:
-        critical(messages.INFECTION_FOUND)
         return True
     else:
-        good(messages.NO_INFECTION_FOUND)
         return False
 
-def main():
+def main(queue_results, queue_errors):
     multiprocessing.freeze_support()
 
     # Generate configuration values.
@@ -74,13 +71,13 @@ def main():
     # Check if this is a supported version of Windows and if so, obtain the
     # volatility profile name.
     if not cfg.get_profile_name():
-        error(messages.UNSUPPORTED_WINDOWS)
+        queue_errors.put(messages.UNSUPPORTED_WINDOWS)
         return
 
     # Obtain the path to the driver to load. At this point, this check should
     # not fail, but you never know.
     if not cfg.get_driver_path():
-        error(messages.NO_DRIVER)
+        queue_errors.put(messages.NO_DRIVER)
         return
 
     log.info("Selected Driver: {0}".format(cfg.driver))
@@ -93,7 +90,7 @@ def main():
         service.start()
     except DetectorError as e:
         log.critical(e)
-        error(messages.SERVICE_NO_START)
+        queue_errors.put(messages.SERVICE_NO_START)
         return
     else:
         log.info("Service started")
@@ -110,10 +107,10 @@ def main():
         #scanner = multiprocessing.Process(target=scan, args=(cfg.service_path, cfg.profile))
         #scanner.start()
         #scanner.join()
-        infected = scan(cfg.service_path, cfg.profile)
+        scan(cfg.service_path, cfg.profile, queue_results)
     except DetectorError as e:
         log.critical(e)
-        error(messages.SCAN_FAILED)
+        queue_errors.put(messages.SCAN_FAILED)
     else:
         log.info("Scanning finished")
 
@@ -124,22 +121,8 @@ def main():
         service.delete()
     except DetectorError as e:
         log.critical(e)
-        error(messages.SERVICE_NO_STOP)
-        return
+        queue_errors.put(messages.SERVICE_NO_STOP)
     else:
         log.info("Service stopped")
 
-    # XXX: Just for testing.
-    infected = True
-
-if __name__ == "__main__":
-    # TODO: Add argparse options to download updated yara signatures?
-    # How would they be downloaded into the packaged resources?
-    # From where would they be downloaded?
-    # Would we provide any sort of authentication?
-    # Do we really want to have everyone access to updated signatures or
-    # do we enable just specific API keys to do so?
-
-    main()
-
-    raw_input("Press enter to terminate...")
+    log.info("Analysis finished")

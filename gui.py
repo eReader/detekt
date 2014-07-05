@@ -1,4 +1,5 @@
 import sys
+import Queue
 import threading
 
 from PyQt4.QtCore import *
@@ -12,7 +13,10 @@ import detector
 TEMPLATE_PATH.insert(0, get_resource('gui'))
 webapp = Bottle()
 
-scanner = threading.Thread(target=detector.main)
+queue_results = Queue.Queue()
+queue_errors = Queue.Queue()
+
+scanner = threading.Thread(target=detector.main, args=(queue_results, queue_errors))
 scanner.daemon = True
 
 @webapp.route('/static/<path:path>')
@@ -34,7 +38,26 @@ def check():
     if scanner.isAlive():
         return template('index', action='running')
     else:
-        return template('index', action='results', infected=True)
+        infected = False
+        if queue_results.qsize() > 0:
+            infected = True
+
+        errors = []
+        while True:
+            try:
+                errors.append(queue_errors.get(block=False))
+            except Queue.Empty:
+                break
+
+        results = []
+        while True:
+            try:
+                results.append(queue_results.get(block=False))
+            except Queue.Empty:
+                break
+
+        return template('index', action='results', infected=infected,
+                        errors=errors, results=results)
 
 class WebApp(QThread):
     def __init__(self):
@@ -48,9 +71,6 @@ class Window(QWebView):
         QWebView.__init__(self)
         self.setWindowTitle('Detekt')
         self.resize(640, 400)
-        self.setMinimumSize(640, 400)
-        self.setMaximumSize(640, 400)
-        #self.setWindowIcon(window_icon)
         self.load(QUrl('http://localhost:31337/'))
 
 def main():
