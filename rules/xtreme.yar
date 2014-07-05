@@ -9,3 +9,20 @@ rule Xtreme_Strings
     condition:
         any of them
 }
+
+rule Xtreme_Units
+{
+    strings:
+        $1 = /(U)nitConfigs/ wide ascii
+        $2 = /(U)nitGetServer/ wide ascii
+        $3 = /(U)nitKeylogger/ wide ascii
+        $4 = /(U)nitCryptString/ wide ascii
+        $5 = /(U)nitInstallServer/ wide ascii
+        $6 = /(U)nitInjectServer/ wide ascii
+        $7 = /(U)nitBinder/ wide ascii
+        $8 = /(U)nitInjectProcess/ wide ascii
+
+    condition:
+        3 of them
+}
+

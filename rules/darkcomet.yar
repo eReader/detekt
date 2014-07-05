@@ -36,3 +36,14 @@ rule DarkComet_Keylogger
     condition:
         all of them
 }
+
+rule DarkComet_RemoteShell
+{
+    strings:
+        $1 = /(A)CTIVEREMOTESHELL/ wide ascii
+        $2 = /(S)UBMREMOTESHELL/ wide ascii
+        $3 = /(K)ILLREMOTESHELL/ wide ascii
+
+    condition:
+        all of them
+}
