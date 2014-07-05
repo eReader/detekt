@@ -1,9 +1,12 @@
 import os
 import time
 import logging
-from volatility import session
-from volatility import plugins
-from volatility import utils
+import volatility.conf as conf
+import volatility.registry as registry
+import volatility.commands as commands
+import volatility.addrspace as addrspace
+import volatility.utils as utils
+import volatility.plugins.malware.malfind as malfind
 
 import messages
 from messages import *
@@ -17,42 +20,44 @@ log.propagate = 0
 log.addHandler(logging.FileHandler(os.path.join(os.getcwd(), 'detector.log')))
 log.setLevel(logging.INFO)
 
-def scan(service_path, profile_name, queue_results):
-    # Initialize Volatility session and specify path to the winpmem service
-    # and the detected profile name.
-    sess = session.Session(filename=service_path, profile=profile_name)
+def get_address_space(service_path, profile, yara_path):
+    registry.PluginImporter()
+    config = conf.ConfObject()
 
+    registry.register_global_options(config, commands.Command)
+    registry.register_global_options(config, addrspace.BaseAddressSpace)
+
+    config.parse_options()
+    config.PROFILE = profile
+    config.LOCATION = service_path
+    config.YARA_FILE = yara_path
+
+    return utils.load_as(config)
+
+def scan(service_path, profile_name, queue_results):
     # Find Yara signatures, if file is not available, we need to terminate.
     yara_path = get_resource(os.path.join('rules', 'signatures.yar'))
     if not os.path.exists(yara_path):
         raise DetectorError("Unable to find signatures file!")
 
-    # Load the yarascan plugin from Volatility. We pass it the index file which
-    # is used to load the different rulesets.
-    yara_plugin = sess.plugins.yarascan(yara_file=yara_path)
+    space = get_address_space(service_path, profile_name, yara_path)
+    yara = malfind.YaraScan(space.get_config())
 
-    # This ia a list used to track which rule gets matched. I'm going to
-    # store the details for each unique rule only.
     matched = []
-    # Initialize memory scanner and loop through matches.
-    for rule, address, _, value in yara_plugin.generate_hits(sess.physical_address_space):
-        # If the current matched rule was not observed before, log detailed
-        # information and a dump of memory in the proximity.
-        if not rule in matched:
-            # Add the name of the rule to the matched list.
-            matched.append(rule)
+    for o, address, hit, value in yara.calculate():
+        if not o:
+            continue
+        elif o.obj_name == '_EPROCESS':
+            if not hit.rule in matched:
+                matched.append(hit.rule)
+                pid = o.UniqueProcessId
+                ppid = o.InheritedFromUniqueProcessId
 
-            # Obtain proximity dump.
-            context = sess.physical_address_space.zread(address-0x10, 0x40)
+                log.warning("Matched: %s PID: %s, PPID: %s, Address: %s, Value: %s",
+                            hit.rule, pid, ppid, address, value)
 
-            rule_data = ''
-            for offset, hexdata, translated_data in utils.Hexdump(context):
-                rule_data += '{0} {1}\n'.format(hexdata, ''.join(translated_data))
-
-            log.warning("Matched: %s [0x%.08x]: %s\n\n%s", rule, address, value, rule_data)
-
-            # Add match to the resuts queue.
-            queue_results.put({'rule' : rule, 'address' : address, 'value' : value})
+                queue_results.put({'rule' : hit.rule, 'pid' : pid, 'ppid' : ppid,
+                                   'address': address, 'value' : value})
 
     # If any rule gets matched, we need to notify the user and instruct him
     # on how to proceed from here.
@@ -113,3 +118,9 @@ def main(queue_results, queue_errors):
         log.info("Service stopped")
 
     log.info("Analysis finished")
+
+if __name__ == '__main__':
+    from Queue import Queue
+    results = Queue()
+    errors = Queue()
+    main(results, errors)

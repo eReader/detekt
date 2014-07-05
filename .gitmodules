@@ -1,3 +1,6 @@
 [submodule "pyinstaller"]
 	path = pyinstaller
 	url = https://github.com/pyinstaller/pyinstaller.git
+[submodule "volatility"]
+	path = volatility
+	url = git@github.com:botherder/volatility.git

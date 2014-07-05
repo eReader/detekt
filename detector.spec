@@ -1,20 +1,24 @@
 # -*- mode: python -*-
+def get_plugins(list):
+    for item in list:
+        if item[0].startswith('volatility.plugins') and not (item[0] == 'volatility.plugins' and '__init__.py' in item[1]):
+            yield item
+
 a = Analysis(['gui.py'],
-             pathex=[os.path.dirname(__file__)],
-             hiddenimports=[],
-             hookspath=None)
+              pathex=[os.path.dirname(__file__)],
+              hookspath=['hooks'])
 
 pyz = PYZ(a.pure)
 
-#for folder in ['drivers', 'rules']:
-#    for file_name in os.listdir(folder):
-#        a.datas.append((file_name, os.path.join(folder, file_name), 'DATA'))
+volatility = Tree(os.path.join('volatility', 'volatility'),
+                  prefix='volatility')
 
 exe = EXE(pyz,
           a.scripts,
           a.binaries,
           a.zipfiles,
           a.datas,
+          volatility,
           Tree('gui', prefix='gui'),
           Tree('drivers', prefix='drivers'),
           Tree('rules', prefix='rules'),
@@ -22,5 +26,5 @@ exe = EXE(pyz,
           debug=False,
           strip=False,
           upx=False,
-          console=True,
+          console=True, # TODO: Turn to False when finished developing.
           icon='magnify.exe,0')
