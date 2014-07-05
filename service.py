@@ -5,9 +5,8 @@ from threading import Timer, Event
 
 from config import Config
 from abstracts import DetectorError
-from messages import warning
 
-SERVICE_WAIT_TIMEOUT = 60
+SERVICE_WAIT_TIMEOUT = 30
 
 class Service(object):
     def __init__(self, driver, service):
@@ -21,7 +20,7 @@ class Service(object):
         abort.clear()
 
         def die():
-            warning("Timeout hit waiting service for status {0}".format(status))
+            print("Timeout hit waiting service for status {0}".format(status))
             abort.set()
 
         timer = Timer(timeout, die)
