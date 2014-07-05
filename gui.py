@@ -70,7 +70,7 @@ class Window(QWebView):
     def __init__(self):
         QWebView.__init__(self)
         self.setWindowTitle('Detekt')
-        self.resize(640, 400)
+        self.resize(640, 440)
         self.load(QUrl('http://localhost:31337/'))
 
 def main():
