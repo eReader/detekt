@@ -20,7 +20,6 @@ class Service(object):
         abort.clear()
 
         def die():
-            print("Timeout hit waiting service for status {0}".format(status))
             abort.set()
 
         timer = Timer(timeout, die)
@@ -29,8 +28,7 @@ class Service(object):
         while True:
             if abort.is_set():
                 # If timeout is hit we abort.
-                # Perhaps I should raise an exception?
-                return
+                raise DetectorError("Timeout hit waiting service for status %s", status)
 
             current = win32service.QueryServiceStatusEx(self.service)
 

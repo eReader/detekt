@@ -15,12 +15,20 @@ from config import Config
 from service import Service
 from utils import get_resource
 
-log = logging.getLogger("detector")
+log = logging.getLogger('detector')
 log.propagate = 0
-log.addHandler(logging.FileHandler(os.path.join(os.getcwd(), 'detector.log')))
+fh = logging.FileHandler(os.path.join(os.getcwd(), 'detector.log'))
+sh = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+sh.setFormatter(formatter)
+log.addHandler(fh)
+log.addHandler(sh)
 log.setLevel(logging.INFO)
 
 def get_address_space(service_path, profile, yara_path):
+    log.info("Obtaining address space and generating config for volatility")
+
     registry.PluginImporter()
     config = conf.ConfObject()
 
@@ -36,9 +44,13 @@ def get_address_space(service_path, profile, yara_path):
 
 def scan(service_path, profile_name, queue_results):
     # Find Yara signatures, if file is not available, we need to terminate.
-    yara_path = get_resource(os.path.join('rules', 'signatures.yar'))
+    yara_path = os.path.join(os.getcwd(), 'signatures.yar')
     if not os.path.exists(yara_path):
-        raise DetectorError("Unable to find signatures file!")
+        yara_path = get_resource(os.path.join('rules', 'signatures.yar'))
+        if not os.path.exists(yara_path):
+            raise DetectorError("Unable to find a valid Yara signatures file!")
+
+    log.info("Selected Yara signature file at %s", yara_path)
 
     space = get_address_space(service_path, profile_name, yara_path)
     yara = malfind.YaraScan(space.get_config())
@@ -65,7 +77,7 @@ def scan(service_path, profile_name, queue_results):
                                    'address': address, 'value' : value})
 
     # Close handle to address space object.
-    space.close()
+    #space.close()
 
     # If any rule gets matched, we need to notify the user and instruct him
     # on how to proceed from here.
@@ -81,17 +93,20 @@ def main(queue_results, queue_errors):
     # Check if this is a supported version of Windows and if so, obtain the
     # volatility profile name.
     if not cfg.get_profile_name():
+        log.error("Unsupported version of Windows, can't select a profile")
         queue_errors.put(messages.UNSUPPORTED_WINDOWS)
         return
+
+    log.info("Selected Profile Name: {0}".format(cfg.profile))
 
     # Obtain the path to the driver to load. At this point, this check should
     # not fail, but you never know.
     if not cfg.get_driver_path():
+        log.error("Unable to find a proper winpmem driver")
         queue_errors.put(messages.NO_DRIVER)
         return
 
     log.info("Selected Driver: {0}".format(cfg.driver))
-    log.info("Selected Profile Name: {0}".format(cfg.profile))
 
     # Initialize the winpmem service.
     try:
@@ -99,7 +114,7 @@ def main(queue_results, queue_errors):
         service.create()
         service.start()
     except DetectorError as e:
-        log.critical(e)
+        log.critical("Unable to start winpmem service: %s", e)
         queue_errors.put(messages.SERVICE_NO_START)
         return
     else:
@@ -107,9 +122,10 @@ def main(queue_results, queue_errors):
 
     # Launch the scanner.
     try:
+        log.info("Starting yara scanner...")
         scan(cfg.service_path, cfg.profile, queue_results)
     except DetectorError as e:
-        log.critical(e)
+        log.critical("Yara scanning failed: %s", e)
         queue_errors.put(messages.SCAN_FAILED)
     else:
         log.info("Scanning finished")
@@ -120,7 +136,7 @@ def main(queue_results, queue_errors):
         service.stop()
         service.delete()
     except DetectorError as e:
-        log.critical(e)
+        log.critical("Unable to stop winpmem service: %s", e)
         queue_errors.put(messages.SERVICE_NO_STOP)
     else:
         log.info("Service stopped")
