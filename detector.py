@@ -66,15 +66,23 @@ def scan(service_path, profile_name, queue_results):
                 continue
 
             if not hit.rule in matched:
+                # Add the rule to the list of matched rules, so we don't have
+                # useless repetitions.
                 matched.append(hit.rule)
+                # ID of the process matching the signature.
                 pid = o.UniqueProcessId
+                # Parent ID of the process matching the signature.
                 ppid = o.InheritedFromUniqueProcessId
+    
+                # Extract hexdump of the memory chunk that matched the signature.
+                rule_data = ''
+                for offset, hexdata, translated_data in utils.Hexdump(value):
+                    rule_data += '{0} {1}\n'.format(hexdata, ''.join(translated_data))
 
-                log.warning("Matched: %s PID: %s, PPID: %s, Address: %s, Value: %s",
-                            hit.rule, pid, ppid, address, value)
+                log.warning("Matched: %s PID: %s, PPID: %s, Address: %s, Value:\n\n%s",
+                            hit.rule, pid, ppid, address, rule_data)
 
-                queue_results.put({'rule' : hit.rule, 'pid' : pid, 'ppid' : ppid,
-                                   'address': address, 'value' : value})
+                queue_results.put({'rule' : hit.rule, 'pid' : pid, 'ppid' : ppid})
 
     # Close handle to address space object.
     #space.close()
