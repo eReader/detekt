@@ -48,6 +48,11 @@ def scan(service_path, profile_name, queue_results):
         if not o:
             continue
         elif o.obj_name == '_EPROCESS':
+            # If the PID is of the current process, it's a false positive.
+            # It just detected the Yara signatures in memory. Skip.
+            if int(o.UniqueProcessId) == int(os.getpid()):
+                continue
+
             if not hit.rule in matched:
                 matched.append(hit.rule)
                 pid = o.UniqueProcessId
@@ -58,6 +63,9 @@ def scan(service_path, profile_name, queue_results):
 
                 queue_results.put({'rule' : hit.rule, 'pid' : pid, 'ppid' : ppid,
                                    'address': address, 'value' : value})
+
+    # Close handle to address space object.
+    space.close()
 
     # If any rule gets matched, we need to notify the user and instruct him
     # on how to proceed from here.
