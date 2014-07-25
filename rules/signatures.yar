@@ -1,3 +1,5 @@
 include "blackshades.yar"
 include "darkcomet.yar"
 include "xtreme.yar"
+include "rcs.yar"
+include "finfisher.yar"
