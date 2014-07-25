@@ -1,3 +1,7 @@
+# Copyright (C) 2014 Claudio Guarnieri.
+# This file is part of Detekt - https://github.com/botherder/detekt
+# See the file 'LICENSE' for copying permission.
+
 import os
 import time
 import logging
@@ -15,6 +19,11 @@ from config import Config
 from service import Service
 from utils import get_resource
 
+# Reduce noise from Volatility.
+logging.getLogger('volatility.obj').setLevel(logging.ERROR)
+logging.getLogger('volatility.utils').setLevel(logging.ERROR)
+
+# Configure logging for our main application.
 log = logging.getLogger('detector')
 log.propagate = 0
 fh = logging.FileHandler(os.path.join(os.getcwd(), 'detector.log'))
@@ -24,7 +33,7 @@ fh.setFormatter(formatter)
 sh.setFormatter(formatter)
 log.addHandler(fh)
 log.addHandler(sh)
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
 def get_address_space(service_path, profile, yara_path):
     log.info("Obtaining address space and generating config for volatility")

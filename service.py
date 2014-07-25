@@ -1,3 +1,7 @@
+# Copyright (C) 2014 Claudio Guarnieri.
+# This file is part of Detekt - https://github.com/botherder/detekt
+# See the file 'LICENSE' for copying permission.
+
 import os
 import time
 import logging
@@ -17,6 +21,10 @@ class Service(object):
         self.service_name = service
         self.manager = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_CREATE_SERVICE)
         self.service = None
+
+    def __del__(self):
+        if self.service:
+            win32service.CloseServiceHandle(self.service)
 
     def wait_status(self, status=win32service.SERVICE_RUNNING, timeout=SERVICE_WAIT_TIMEOUT):
         abort = Event()
@@ -48,24 +56,50 @@ class Service(object):
         if not self.driver or not os.path.exists(self.driver):
             raise DetectorError("The driver does not exist at path: {0}".format(self.driver))
 
+        # TODO: The following procedure is hacky and ugly and it needs to be
+        # cleaned up.
+
         try:
-            self.service = win32service.OpenService(self.manager, self.service_name, win32service.SERVICE_ALL_ACCESS)
+            self.service = win32service.OpenService(
+                self.manager,
+                self.service_name,
+                win32service.SERVICE_ALL_ACCESS
+            )
         except:
-            try:
-                if not self.service:
-                    self.service = win32service.CreateService(
-                        self.manager,
-                        self.service_name,
-                        self.service_name,
-                        win32service.SERVICE_ALL_ACCESS,
-                        win32service.SERVICE_KERNEL_DRIVER,
-                        win32service.SERVICE_DEMAND_START,
-                        win32service.SERVICE_ERROR_IGNORE,
-                        self.driver,
-                        None, 0, None, None, None
-                    )
-            except Exception as e:
-                raise DetectorError("Unable to create service: {0}".format(e))
+            pass
+
+        try:
+            if self.service:
+                log.debug("The service appear to exist already, let's try to delete it...")
+
+                try:
+                    self.stop()
+                except:
+                    pass
+
+                self.delete()
+        except Exception as e:
+            log.warning(e)
+            pass
+
+        try:
+            if not self.service:
+                self.service = win32service.CreateService(
+                    self.manager,
+                    self.service_name,
+                    self.service_name,
+                    win32service.SERVICE_ALL_ACCESS,
+                    win32service.SERVICE_KERNEL_DRIVER,
+                    win32service.SERVICE_DEMAND_START,
+                    win32service.SERVICE_ERROR_IGNORE,
+                    self.driver,
+                    None, 0, None, None, None
+                )
+            else:
+                raise DetectorError("Unable to create service: another service already exists,"
+                                    " try to restart the computer.")
+        except Exception as e:
+            raise DetectorError("Unable to create service: {0}".format(e))
 
     def start(self):
         log.info("Trying to start the winpmem service...")

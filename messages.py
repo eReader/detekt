@@ -1,6 +1,10 @@
+# Copyright (C) 2014 Claudio Guarnieri.
+# This file is part of Detekt - https://github.com/botherder/detekt
+# See the file 'LICENSE' for copying permission.
+
 UNSUPPORTED_WINDOWS = "You are running an unsupported version of Microsoft Windows."
 NO_DRIVER = "Can't find a suitable driver to be used."
-SERVICE_NO_START = "Can't start the service."
+SERVICE_NO_START = "Can't start the service, try to restart the computer"
 SCAN_STARTING = "Start scanning. This might take some minutes..."
 SCAN_FINISHED = "Scan finished."
 SCAN_FAILED = "The scanning failed, try reinstalling the tool. If that doesn't help, provide the log file to your point of contact to investigate the issue."
