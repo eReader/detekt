@@ -1,27 +1,27 @@
 rule BlackShades_Mods
 {
     strings:
-        $1 = "modAPI"
-        $2 = "modAudio"
-        $3 = "modBtKiller"
-        $4 = "modCrypt"
-        $5 = "modFuctions"
-        $6 = "modHijack"
-        $7 = "modICallBack"
-        $8 = "modIInet"
-        $9 = "modInfect"
-        $10 = "modInjPE"
-        $11 = "modLaunchWeb"
-        $12 = "modOS"
-        $13 = "modPWs"
-        $14 = "modRegistry"
-        $15 = "modScreencap"
-        $16 = "modSniff"
-        $17 = "modSocketMaster"
-        $18 = "modSpread"
-        $19 = "modSqueezer"
-        $20 = "modSS"
-        $21 = "modTorrentSeed"
+        $1 = /(m)odAPI/
+        $2 = /(m)odAudio/
+        $3 = /(m)odBtKiller/
+        $4 = /(m)odCrypt/
+        $5 = /(m)odFuctions/
+        $6 = /(m)odHijack/
+        $7 = /(m)odICallBack/
+        $8 = /(m)odIInet/
+        $9 = /(m)odInfect/
+        $10 = /(m)odInjPE/
+        $11 = /(m)odLaunchWeb/
+        $12 = /(m)odOS/
+        $13 = /(m)odPWs/
+        $14 = /(m)odRegistry/
+        $15 = /(m)odScreencap/
+        $16 = /(m)odSniff/
+        $17 = /(m)odSocketMaster/
+        $18 = /(m)odSpread/
+        $19 = /(m)odSqueezer/
+        $20 = /(m)odSS/
+        $21 = /(m)odTorrentSeed/
 
     condition:    
         10 of them
@@ -30,29 +30,29 @@ rule BlackShades_Mods
 rule BlackShades_Tmr
 {
     strings:
-        $1 = "tmrAlarms"
-        $2 = "tmrAlive"
-        $3 = "tmrAnslut"
-        $4 = "tmrAudio"
-        $5 = "tmrBlink"
-        $6 = "tmrCheck"
-        $7 = "tmrCountdown"
-        $8 = "tmrCrazy"
-        $9 = "tmrDOS"
-        $10 = "tmrDoWork"
-        $11 = "tmrFocus"
-        $12 = "tmrGrabber"
-        $13 = "tmrInaktivitet"
-        $14 = "tmrInfoTO"
-        $15 = "tmrIntervalUpdate"
-        $16 = "tmrLiveLogger"
-        $17 = "tmrPersistant"
-        $18 = "tmrScreenshot"
-        $19 = "tmrSpara"
-        $20 = "tmrSprid"
-        $21 = "tmrTCP"
-        $22 = "tmrUDP"
-        $23 = "tmrWebHide"
+        $1 = /(t)mrAlarms/
+        $2 = /(t)mrAlive/
+        $3 = /(t)mrAnslut/
+        $4 = /(t)mrAudio/
+        $5 = /(t)mrBlink/
+        $6 = /(t)mrCheck/
+        $7 = /(t)mrCountdown/
+        $8 = /(t)mrCrazy/
+        $9 = /(t)mrDOS/
+        $10 = /(t)mrDoWork/
+        $11 = /(t)mrFocus/
+        $12 = /(t)mrGrabber/
+        $13 = /(t)mrInaktivitet/
+        $14 = /(t)mrInfoTO/
+        $15 = /(t)mrIntervalUpdate/
+        $16 = /(t)mrLiveLogger/
+        $17 = /(t)mrPersistant/
+        $18 = /(t)mrScreenshot/
+        $19 = /(t)mrSpara/
+        $20 = /(t)mrSprid/
+        $21 = /(t)mrTCP/
+        $22 = /(t)mrUDP/
+        $23 = /(t)mrWebHide/
 
     condition:
         10 of them

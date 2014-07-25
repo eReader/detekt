@@ -1,8 +1,8 @@
 rule RCSScout_Format
 {
     strings:
-        $1 = "%02X%02X%02X%02X%c%c"
-        $2 = "%c%c%c%02X%02X%02X%02X"
+        $1 = /(%)02X%02X%02X%02X%c%c/
+        $2 = /(%)c%c%c%02X%02X%02X%02X/
 
     condition:
         all of them
@@ -11,11 +11,11 @@ rule RCSScout_Format
 rule RCSScout_Engine
 {
     strings:
-        $1 = "Engine started" wide ascii
-        $2 = "Running in background" wide ascii
-        $3 = "Locking doors" wide ascii
-        $4 = "Rotors engaged" wide ascii
-        $5 = "I'm going to start it" wide ascii
+        $1 = /(E)ngine started/ wide ascii
+        $2 = /(R)unning in background/ wide ascii
+        $3 = /(L)ocking doors/ wide ascii
+        $4 = /(R)otors engaged/ wide ascii
+        $5 = /(I)\'m going to start it/ wide ascii
 
     condition:
         2 of them
@@ -24,10 +24,10 @@ rule RCSScout_Engine
 rule RCSScout_Start
 {
     strings:
-        $1 = "Starting upgrade!" wide ascii
-        $2 = "I'm going to start the program" wide ascii
-        $3 = "is it ok?" wide ascii
-        $4 = "Click to start the program" wide ascii
+        $1 = /Starting upgrade\!/ wide ascii
+        $2 = /(I)\'m going to start the program/ wide ascii
+        $3 = /(i)s it ok\?/ wide ascii
+        $4 = /(C)lick to start the program/ wide ascii
 
     condition:
         2 of them
@@ -36,8 +36,8 @@ rule RCSScout_Start
 rule RCSScout_Upd
 {
     strings:
-        $1 = "UpdJob" wide ascii
-        $2 = "UpdTimer" wide ascii
+        $1 = /(U)pdJob/ wide ascii
+        $2 = /(U)pdTimer/ wide ascii
 
     condition:
         all of them
@@ -46,9 +46,9 @@ rule RCSScout_Upd
 rule RCS_Debug
 {
     strings:
-        $1 = "- Checking components" wide ascii
-        $2 = "- Activating hiding system" wide ascii
-        $3 = "fully operational" wide ascii
+        $1 = /\- Checking components/ wide ascii
+        $2 = /\- Activating hiding system/ wide ascii
+        $3 = /(f)ully operational/ wide ascii
 
     condition:
         2 of them
@@ -57,10 +57,10 @@ rule RCS_Debug
 rule RCS_Log
 {
     strings:
-        $1 = "- Browser activity (FF)" wide ascii
-        $2 = "- Browser activity (IE)" wide ascii
-        $3 = "- About to call init routine at %p" wide ascii
-        $4 = "- Calling init routine at %p" wide ascii
+        $1 = /\- Browser activity \(FF\)/ wide ascii
+        $2 = /\- Browser activity \(IE\)/ wide ascii
+        $3 = /\- About to call init routine at %p/ wide ascii
+        $4 = /\- Calling init routine at %p/ wide ascii
 
     condition:
         2 of them
@@ -69,8 +69,8 @@ rule RCS_Log
 rule RCS_Errors
 {
     strings:
-        $1 = "[Unable to deploy]" wide ascii
-        $2 = "[The system is already monitored]" wide ascii
+        $1 = /\[Unable to deploy\]/ wide ascii
+        $2 = /\[The system is already monitored\]/ wide ascii
 
     condition:
         all of them
@@ -100,20 +100,20 @@ rule RCS_Config
 rule RCS_Processes
 {
     strings:
-        $1 = "Unhackme.exe"
-        $2 = "hackmon.exe"
-        $3 = "hiddenfinder.exe"
-        $4 = "rootkitbuster*.exe"
-        $5 = "RootkitRevealer.exe"
-        $6 = "avgarkt.exe"
-        $7 = "avgscanx.exe"
-        $8 = "avk.exe"
-        $9 = "avp.exe"
-        $10 = "avscan.exe"
-        $11 = "bb_in.exe"
-        $12 = "bgscan.exe"
-        $13 = "IceSword.exe"
-        $14 = "k7*.exe"
+        $1 = /(U)nhackme\.exe/
+        $2 = /(h)ackmon\.exe/
+        $3 = /(h)iddenfinder\.exe/
+        $4 = /(r)ootkitbuster\*\.exe/
+        $5 = /(R)ootkitRevealer\.exe/
+        $6 = /(a)vgarkt\.exe/
+        $7 = /(a)vgscanx\.exe/
+        $8 = /(a)vk\.exe/
+        $9 = /(a)vp\.exe/
+        $10 = /(a)vscan\.exe/
+        $11 = /(b)b_in\.exe/
+        $12 = /(b)gscan\.exe/
+        $13 = /(I)ceSword\.exe/
+        $14 = /(k)7\*\.exe/
 
     condition:
         all of them
@@ -122,9 +122,9 @@ rule RCS_Processes
 rule RCS_StealCreds
 {
     strings:
-        $1 = "SELECT * FROM cookies;"
-        $2 = "SELECT * FROM moz_cookies;"
-        $3 = "SELECT * FROM logins;"
+        $1 = /SELECT \* FROM cookies;/
+        $2 = /SELECT \* FROM moz_cookies;/
+        $3 = /SELECT \* FROM logins;/
 
     condition:
         all of them
@@ -133,11 +133,11 @@ rule RCS_StealCreds
 rule RCS_Skype
 {
     strings:
-        $1 = "SkypeControlAPIAttach"
-        $2 = "SkypeControlAPIDiscover"
-        $3 = "skype.exe"
-        $4 = "skypepm.exe"
-        $5 = "Skype.exe /nosplash /minimized"
+        $1 = /(S)kypeControlAPIAttach/
+        $2 = /(S)kypeControlAPIDiscover/
+        $3 = /(s)kype\.exe/
+        $4 = /(s)kypepm\.exe/
+        $5 = /(S)kype\.exe \/nosplash \/minimized/
 
     condition:
         all of them
