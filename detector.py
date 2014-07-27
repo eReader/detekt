@@ -88,13 +88,16 @@ def scan(service_path, profile_name, queue_results):
                 for offset, hexdata, translated_data in utils.Hexdump(value):
                     rule_data += '{0} {1}\n'.format(hexdata, ''.join(translated_data))
 
-                log.warning("Matched: %s PID: %s, PPID: %s, Address: %s, Value:\n\n%s",
+                log.warning("Matched: %s, PID: %s, PPID: %s, Address: %s, Value:\n\n%s",
                             hit.rule, pid, ppid, address, rule_data)
 
-                queue_results.put({'rule' : hit.rule, 'pid' : pid, 'ppid' : ppid})
-
-    # Close handle to address space object.
-    #space.close()
+                queue_results.put(dict(
+                    rule=hit.rule,
+                    detection=hit.meta.get('detection'),
+                    description=hit.meta.get('description'),
+                    pid=pid,
+                    ppid=ppid
+                ))
 
     # If any rule gets matched, we need to notify the user and instruct him
     # on how to proceed from here.
@@ -153,8 +156,7 @@ def main(queue_results, queue_errors):
         service.stop()
         service.delete()
     except DetectorError as e:
-        log.critical("Unable to stop winpmem service: %s", e)
-        queue_errors.put(messages.SERVICE_NO_STOP)
+        log.error("Unable to stop winpmem service: %s", e)
     else:
         log.info("Service stopped")
 

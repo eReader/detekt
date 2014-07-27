@@ -1,28 +1,24 @@
-rule Xtreme_Strings
+rule Xtreme
 {
+    meta:
+        detection = "Xtreme RAT"
+        description = "This is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless."
+
     strings:
-        $1 = /(X)tremeKeylogger/ wide ascii
-        $2 = /(X)tremeRAT/ wide ascii
-        $3 = /(X)TREMEUPDATE/ wide ascii
-        $4 = /(S)TUBXTREMEINJECTED/ wide ascii
+        $string1 = /(X)tremeKeylogger/ wide ascii
+        $string2 = /(X)tremeRAT/ wide ascii
+        $string3 = /(X)TREMEUPDATE/ wide ascii
+        $string4 = /(S)TUBXTREMEINJECTED/ wide ascii
+
+        $unit1 = /(U)nitConfigs/ wide ascii
+        $unit2 = /(U)nitGetServer/ wide ascii
+        $unit3 = /(U)nitKeylogger/ wide ascii
+        $unit4 = /(U)nitCryptString/ wide ascii
+        $unit5 = /(U)nitInstallServer/ wide ascii
+        $unit6 = /(U)nitInjectServer/ wide ascii
+        $unit7 = /(U)nitBinder/ wide ascii
+        $unit8 = /(U)nitInjectProcess/ wide ascii
 
     condition:
-        any of them
+        any of ($string*) or 3 of ($unit*)
 }
-
-rule Xtreme_Units
-{
-    strings:
-        $1 = /(U)nitConfigs/ wide ascii
-        $2 = /(U)nitGetServer/ wide ascii
-        $3 = /(U)nitKeylogger/ wide ascii
-        $4 = /(U)nitCryptString/ wide ascii
-        $5 = /(U)nitInstallServer/ wide ascii
-        $6 = /(U)nitInjectServer/ wide ascii
-        $7 = /(U)nitBinder/ wide ascii
-        $8 = /(U)nitInjectProcess/ wide ascii
-
-    condition:
-        3 of them
-}
-

@@ -60,30 +60,28 @@
                     % end
                 </ul>
             </div>
-            % end
-
-            % if infected:
-            <div class="alert alert-danger">
-                <h4>DANGER!</h4>
-                <strong>I managed to identify the potential presence of some spyware!</strong> You should turn off this computer, never connect it again to the Internet or any external device and seek assistance.
-            </div>
-
-            <p>Following are the signatures that matched:</p>
-            <ul>
-                % for result in results:
-                <li>{{result['rule']}}</li>
-                % end
-            </ul>
-
             % else:
-            <div class="alert alert-success">
-                <h4>Looks good :-)</h4>
-                I wasn't able to identify the presence of any obvious spyware. Please note that this does not necessarily mean your computer is clean. If you have strong suspicion of being targeted, please do seek assistance nevertheless.
-            </div>
+                % if infected:
+                <div class="alert alert-danger">
+                    <h4>DANGER!</h4>
+                    <strong>I managed to identify the potential presence of some spyware!</strong> You should turn off this computer, never connect it again to the Internet or any external device and seek assistance.
+                </div>
+
+                <p>Following is what I discovered:</p>
+                <ul>
+                    % for detection, description in results.items():
+                    <li><strong>{{detection}}</strong><br />{{description}}</li>
+                    % end
+                </ul>
+
+                % else:
+                <div class="alert alert-success">
+                    <h4>Looks good :-)</h4>
+                    I wasn't able to identify the presence of any obvious spyware. Please note that this does not necessarily mean your computer is clean. If you have strong suspicion of being targeted, please do seek assistance nevertheless.
+                </div>
+                % end
             % end
-
         % end
-
         <div style="text-align: center;"><small>created by <strong>Claudio Guarnieri</strong></small></div>
     </div>
 </body>

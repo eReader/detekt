@@ -1,5 +1,8 @@
 rule FinSpy_PasswordSteal
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /\/scomma kbd101\.sys/ wide ascii
         $2 = /(N)AME,EMAIL CLIENT,EMAIL ADDRESS,SERVER NAME,SERVER TYPE,USERNAME,PASSWORD,PROFILE/ wide ascii
@@ -22,6 +25,9 @@ rule FinSpy_PasswordSteal
 
 rule FinSpy_ScreenRecorder
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /(s)111o00000000\.dat/ wide ascii
         $2 = /(t)111o00000000\.dat/ wide ascii
@@ -37,6 +43,9 @@ rule FinSpy_ScreenRecorder
 
 rule FinSpy_KeyLogger
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /\<%s UTC %s\|%d\|%s\>/ wide ascii
         $2 = /1201[0-9A-F]{8}\.dat/ wide ascii
@@ -47,6 +56,9 @@ rule FinSpy_KeyLogger
 
 rule FinSpy_MicRecorder
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /2101[0-9A-F]{8}\.dat/ wide ascii
 
@@ -56,6 +68,9 @@ rule FinSpy_MicRecorder
 
 rule FinSpy_SkypeRecorder
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /\[%19s\] %25s\:    %s/ wide ascii
         $2 = /Global\\\{A48F1A32\-A340\-11D0\-BC6B\-00A0C903%\.04X\}/ wide
@@ -67,6 +82,9 @@ rule FinSpy_SkypeRecorder
 
 rule FinSpy_MouseRecorder
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /(m)sc183Q000\.dat/ wide ascii
         $2 = /2201[0-9A-F]{8}\.dat/ wide ascii
@@ -77,6 +95,9 @@ rule FinSpy_MouseRecorder
 
 rule FinSpy_Driver
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /\\\\\\\\\.\\\\driverw/ wide ascii
 
@@ -86,6 +107,9 @@ rule FinSpy_Driver
 
 rule FinSpy_Mutexes
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /(W)ininetProxyMutex/ wide ascii
         $2 = /(W)ininetProxyExit/ wide ascii
@@ -97,6 +121,9 @@ rule FinSpy_Mutexes
 
 rule FinSpy_Typo
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /(S)creenShort Recording/ wide ascii
 
@@ -106,6 +133,9 @@ rule FinSpy_Typo
 
 rule FinSpy_JaneDow
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /(J)ane Dow\'s x32 machine/ wide ascii
         $2 = /(J)ane Dow\'s x64 machine/ wide ascii
@@ -116,6 +146,9 @@ rule FinSpy_JaneDow
 
 rule FinSpy_Versions
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /(f)inspyv2/ nocase
         $2 = /(f)inspyv4/ nocase
@@ -126,6 +159,9 @@ rule FinSpy_Versions
 
 rule FinSpy_Bootkit
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /(b)ootkit_x32driver/
         $2 = /(b)ootkit_x64driver/
@@ -136,6 +172,9 @@ rule FinSpy_Bootkit
 
 rule FinSpy_Encryption
 {
+    meta:
+        detection = "FinFisher FinSpy"
+
     strings:
         $1 = /\\x90\\x03\\xFE\\x00\\xFA\\xF9\\xF8\\xFF/
         $2 = /\\x90\\x03\\xFE\\x00\\xEA\\xE9\\xE8\\xFF/

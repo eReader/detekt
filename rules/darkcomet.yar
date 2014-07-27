@@ -1,49 +1,32 @@
-rule DarkComet_BOT
+rule DarkComet
 {
+    meta:
+        detection = "DarkComet RAT"
+        description = "This is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless."
+
     strings:
-        $1 = /(#)BOT#OpenUrl/ wide ascii
-        $2 = /(#)BOT#Ping/ wide ascii
-        $3 = /(#)BOT#RunPrompt/ wide ascii
-        $4 = /(#)BOT#SvrUninstall/ wide ascii
-        $5 = /(#)BOT#URLDownload/ wide ascii
-        $6 = /(#)BOT#URLUpdate/ wide ascii
-        $7 = /(#)BOT#VisitUrl/ wide ascii
-        $8 = /(#)BOT#CloseServer/ wide ascii
+        $bot1 = /(#)BOT#OpenUrl/ wide ascii
+        $bot2 = /(#)BOT#Ping/ wide ascii
+        $bot3 = /(#)BOT#RunPrompt/ wide ascii
+        $bot4 = /(#)BOT#SvrUninstall/ wide ascii
+        $bot5 = /(#)BOT#URLDownload/ wide ascii
+        $bot6 = /(#)BOT#URLUpdate/ wide ascii
+        $bot7 = /(#)BOT#VisitUrl/ wide ascii
+        $bot8 = /(#)BOT#CloseServer/ wide ascii
+
+        $ddos1 = /(D)DOSHTTPFLOOD/ wide ascii
+        $ddos2 = /(D)DOSSYNFLOOD/ wide ascii
+        $ddos3 = /(D)DOSUDPFLOOD/ wide ascii
+
+        $keylogger1 = /(A)ctiveOnlineKeylogger/ wide ascii
+        $keylogger2 = /(U)nActiveOnlineKeylogger/ wide ascii
+        $keylogger3 = /(A)ctiveOfflineKeylogger/ wide ascii
+        $keylogger4 = /(U)nActiveOfflineKeylogger/ wide ascii
+
+        $shell1 = /(A)CTIVEREMOTESHELL/ wide ascii
+        $shell2 = /(S)UBMREMOTESHELL/ wide ascii
+        $shell3 = /(K)ILLREMOTESHELL/ wide ascii
 
     condition:
-        all of them
-}
-
-rule DarkComet_DDOS
-{
-    strings:
-        $1 = /(D)DOSHTTPFLOOD/ wide ascii
-        $2 = /(D)DOSSYNFLOOD/ wide ascii
-        $3 = /(D)DOSUDPFLOOD/ wide ascii
-
-    condition:
-        all of them
-}
-
-rule DarkComet_Keylogger
-{
-    strings:
-        $1 = /(A)ctiveOnlineKeylogger/ wide ascii
-        $2 = /(U)nActiveOnlineKeylogger/ wide ascii
-        $3 = /(A)ctiveOfflineKeylogger/ wide ascii
-        $4 = /(U)nActiveOfflineKeylogger/ wide ascii
-
-    condition:
-        all of them
-}
-
-rule DarkComet_RemoteShell
-{
-    strings:
-        $1 = /(A)CTIVEREMOTESHELL/ wide ascii
-        $2 = /(S)UBMREMOTESHELL/ wide ascii
-        $3 = /(K)ILLREMOTESHELL/ wide ascii
-
-    condition:
-        all of them
+        4 of ($bot*) or all of ($ddos*) or all of ($keylogger*) or all of ($shell*)
 }

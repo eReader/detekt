@@ -1,59 +1,56 @@
-rule BlackShades_Mods
+rule BlackShades
 {
+    meta:
+        detection = "BlackShades RAT"
+        description = "This is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless."
+
     strings:
-        $1 = /(m)odAPI/
-        $2 = /(m)odAudio/
-        $3 = /(m)odBtKiller/
-        $4 = /(m)odCrypt/
-        $5 = /(m)odFuctions/
-        $6 = /(m)odHijack/
-        $7 = /(m)odICallBack/
-        $8 = /(m)odIInet/
-        $9 = /(m)odInfect/
-        $10 = /(m)odInjPE/
-        $11 = /(m)odLaunchWeb/
-        $12 = /(m)odOS/
-        $13 = /(m)odPWs/
-        $14 = /(m)odRegistry/
-        $15 = /(m)odScreencap/
-        $16 = /(m)odSniff/
-        $17 = /(m)odSocketMaster/
-        $18 = /(m)odSpread/
-        $19 = /(m)odSqueezer/
-        $20 = /(m)odSS/
-        $21 = /(m)odTorrentSeed/
+        $mod1 = /(m)odAPI/
+        $mod2 = /(m)odAudio/
+        $mod3 = /(m)odBtKiller/
+        $mod4 = /(m)odCrypt/
+        $mod5 = /(m)odFuctions/
+        $mod6 = /(m)odHijack/
+        $mod7 = /(m)odICallBack/
+        $mod8 = /(m)odIInet/
+        $mod9 = /(m)odInfect/
+        $mod10 = /(m)odInjPE/
+        $mod11 = /(m)odLaunchWeb/
+        $mod12 = /(m)odOS/
+        $mod13 = /(m)odPWs/
+        $mod14 = /(m)odRegistry/
+        $mod15 = /(m)odScreencap/
+        $mod16 = /(m)odSniff/
+        $mod17 = /(m)odSocketMaster/
+        $mod18 = /(m)odSpread/
+        $mod19 = /(m)odSqueezer/
+        $mod20 = /(m)odSS/
+        $mod21 = /(m)odTorrentSeed/
+
+        $tmr1 = /(t)mrAlarms/
+        $tmr2 = /(t)mrAlive/
+        $tmr3 = /(t)mrAnslut/
+        $tmr4 = /(t)mrAudio/
+        $tmr5 = /(t)mrBlink/
+        $tmr6 = /(t)mrCheck/
+        $tmr7 = /(t)mrCountdown/
+        $tmr8 = /(t)mrCrazy/
+        $tmr9 = /(t)mrDOS/
+        $tmr10 = /(t)mrDoWork/
+        $tmr11 = /(t)mrFocus/
+        $tmr12 = /(t)mrGrabber/
+        $tmr13 = /(t)mrInaktivitet/
+        $tmr14 = /(t)mrInfoTO/
+        $tmr15 = /(t)mrIntervalUpdate/
+        $tmr16 = /(t)mrLiveLogger/
+        $tmr17 = /(t)mrPersistant/
+        $tmr18 = /(t)mrScreenshot/
+        $tmr19 = /(t)mrSpara/
+        $tmr20 = /(t)mrSprid/
+        $tmr21 = /(t)mrTCP/
+        $tmr22 = /(t)mrUDP/
+        $tmr23 = /(t)mrWebHide/
 
     condition:    
-        10 of them
-}
-
-rule BlackShades_Tmr
-{
-    strings:
-        $1 = /(t)mrAlarms/
-        $2 = /(t)mrAlive/
-        $3 = /(t)mrAnslut/
-        $4 = /(t)mrAudio/
-        $5 = /(t)mrBlink/
-        $6 = /(t)mrCheck/
-        $7 = /(t)mrCountdown/
-        $8 = /(t)mrCrazy/
-        $9 = /(t)mrDOS/
-        $10 = /(t)mrDoWork/
-        $11 = /(t)mrFocus/
-        $12 = /(t)mrGrabber/
-        $13 = /(t)mrInaktivitet/
-        $14 = /(t)mrInfoTO/
-        $15 = /(t)mrIntervalUpdate/
-        $16 = /(t)mrLiveLogger/
-        $17 = /(t)mrPersistant/
-        $18 = /(t)mrScreenshot/
-        $19 = /(t)mrSpara/
-        $20 = /(t)mrSprid/
-        $21 = /(t)mrTCP/
-        $22 = /(t)mrUDP/
-        $23 = /(t)mrWebHide/
-
-    condition:
-        10 of them
+        10 of ($mod*) or 10 of ($tmr*)
 }

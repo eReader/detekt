@@ -68,10 +68,16 @@ def check():
                 break
 
         # Populate the list of results from the queue.
-        results = []
+        results = {}
         while True:
             try:
-                results.append(queue_results.get(block=False))
+                # Retrieve next entry in the results queue.
+                entry = queue_results.get(block=False)
+                # Only add the detection name to the list of results.
+                # This is to avoid to have the rules names in there, which
+                # will mostly be meaningless to a regular user.
+                if entry['detection'] not in results:
+                    results[entry['detection']] = entry['description']
             except Queue.Empty:
                 break
 
