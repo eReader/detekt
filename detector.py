@@ -172,10 +172,6 @@ def main(queue_results, queue_errors):
     else:
         log.info("Service stopped")
 
-    # Launch destroyer.
-    destroyer.start()
-    destroyer.join()
-
     log.info("Analysis finished")
 
 if __name__ == '__main__':
