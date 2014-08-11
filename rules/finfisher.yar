@@ -1,184 +1,56 @@
-rule FinSpy_PasswordSteal
+rule FinSpy
 {
     meta:
         detection = "FinFisher FinSpy"
+        description = "This is a very sophisticated backdoor produced by a German company and sold to government agencies worldwide. You might be targeted by yours or a foreign government. You should be really careful on your next steps in order to not further jeopardize your situation."
 
     strings:
-        $1 = /\/scomma kbd101\.sys/ wide ascii
-        $2 = /(N)AME,EMAIL CLIENT,EMAIL ADDRESS,SERVER NAME,SERVER TYPE,USERNAME,PASSWORD,PROFILE/ wide ascii
-        $3 = /\/scomma excel2010\.part/ wide ascii
-        $4 = /(A)PPLICATION,PROTOCOL,USERNAME,PASSWORD/ wide ascii
-        $5 = /\/stab MSVCR32\.manifest/ wide ascii
-        $6 = /\/scomma MSN2010\.dll/ wide ascii
-        $7 = /\/scomma Firefox\.base/ wide ascii
-        $8 = /(I)NDEX,URL,USERNAME,PASSWORD,USERNAME FIELD,PASSWORD FIELD,FILE,HTTP/ wide ascii
-        $9 = /\/scomma IE7setup\.sys/ wide ascii
-        $10 = /(O)RIGIN URL,ACTION URL,USERNAME FIELD,PASSWORD FIELD,USERNAME,PASSWORD,TIMESTAMP/ wide ascii
-        $11 = /\/scomma office2007\.cab/ wide ascii
-        $12 = /(U)RL,PASSWORD TYPE,USERNAME,PASSWORD,USERNAME FIELD,PASSWORD FIELD/ wide ascii
-        $13 = /\/scomma outlook2007\.dll/ wide ascii
-        $14 = /(F)ILENAME,ENCRYPTION,VERSION,CRC,PASSWORD 1,PASSWORD 2,PASSWORD 3,PATH,SIZE,LAST MODIFICATION DATE,ERROR/ wide ascii
+        $password1 = /\/scomma kbd101\.sys/ wide ascii
+        $password2 = /(N)AME,EMAIL CLIENT,EMAIL ADDRESS,SERVER NAME,SERVER TYPE,USERNAME,PASSWORD,PROFILE/ wide ascii
+        $password3 = /\/scomma excel2010\.part/ wide ascii
+        $password4 = /(A)PPLICATION,PROTOCOL,USERNAME,PASSWORD/ wide ascii
+        $password5 = /\/stab MSVCR32\.manifest/ wide ascii
+        $password6 = /\/scomma MSN2010\.dll/ wide ascii
+        $password7 = /\/scomma Firefox\.base/ wide ascii
+        $password8 = /(I)NDEX,URL,USERNAME,PASSWORD,USERNAME FIELD,PASSWORD FIELD,FILE,HTTP/ wide ascii
+        $password9 = /\/scomma IE7setup\.sys/ wide ascii
+        $password10 = /(O)RIGIN URL,ACTION URL,USERNAME FIELD,PASSWORD FIELD,USERNAME,PASSWORD,TIMESTAMP/ wide ascii
+        $password11 = /\/scomma office2007\.cab/ wide ascii
+        $password12 = /(U)RL,PASSWORD TYPE,USERNAME,PASSWORD,USERNAME FIELD,PASSWORD FIELD/ wide ascii
+        $password13 = /\/scomma outlook2007\.dll/ wide ascii
+        $password14 = /(F)ILENAME,ENCRYPTION,VERSION,CRC,PASSWORD 1,PASSWORD 2,PASSWORD 3,PATH,SIZE,LAST MODIFICATION DATE,ERROR/ wide ascii
+
+        $screenrec1 = /(s)111o00000000\.dat/ wide ascii
+        $screenrec2 = /(t)111o00000000\.dat/ wide ascii
+        $screenrec3 = /(f)113o00000000\.dat/ wide ascii
+        $screenrec4 = /(w)114o00000000\.dat/ wide ascii
+        $screenrec5 = /(u)112Q00000000\.dat/ wide ascii
+        $screenrec6 = /(v)112Q00000000\.dat/ wide ascii
+        $screenrec7 = /(v)112O00000000\.dat/ wide ascii
+
+        $keylogger1 = /\<%s UTC %s\|%d\|%s\>/ wide ascii
+        $keylogger2 = /1201[0-9A-F]{8}\.dat/ wide ascii
+
+        $micrec = /2101[0-9A-F]{8}\.dat/ wide ascii
+
+        $skyperec1 = /\[%19s\] %25s\:    %s/ wide ascii
+        $skyperec2 = /Global\\\{A48F1A32\-A340\-11D0\-BC6B\-00A0C903%\.04X\}/ wide
+        $skyperec3 = /(1411|1421|1431|1451)[0-9A-F]{8}\.dat/ wide ascii
+
+        $mouserec1 = /(m)sc183Q000\.dat/ wide ascii
+        $mouserec2 = /2201[0-9A-F]{8}\.dat/ wide ascii
+
+        $driver = /\\\\\\\\\.\\\\driverw/ wide ascii
+
+        $janedow1 = /(J)ane Dow\'s x32 machine/ wide ascii
+        $janedow2 = /(J)ane Dow\'s x64 machine/ wide ascii
+
+        $versions1 = /(f)inspyv2/ nocase
+        $versions2 = /(f)inspyv4/ nocase
+
+        $bootkit1 = /(b)ootkit_x32driver/
+        $bootkit2 = /(b)ootkit_x64driver/
 
     condition:
-        any of them
-}
-
-rule FinSpy_ScreenRecorder
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /(s)111o00000000\.dat/ wide ascii
-        $2 = /(t)111o00000000\.dat/ wide ascii
-        $3 = /(f)113o00000000\.dat/ wide ascii
-        $4 = /(w)114o00000000\.dat/ wide ascii
-        $5 = /(u)112Q00000000\.dat/ wide ascii
-        $6 = /(v)112Q00000000\.dat/ wide ascii
-        $7 = /(v)112O00000000\.dat/ wide ascii
-
-    condition:
-        any of them
-}
-
-rule FinSpy_KeyLogger
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /\<%s UTC %s\|%d\|%s\>/ wide ascii
-        $2 = /1201[0-9A-F]{8}\.dat/ wide ascii
-
-    condition:
-        any of them
-}
-
-rule FinSpy_MicRecorder
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /2101[0-9A-F]{8}\.dat/ wide ascii
-
-    condition:
-        $1
-}
-
-rule FinSpy_SkypeRecorder
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /\[%19s\] %25s\:    %s/ wide ascii
-        $2 = /Global\\\{A48F1A32\-A340\-11D0\-BC6B\-00A0C903%\.04X\}/ wide
-        $3 = /(1411|1421|1431|1451)[0-9A-F]{8}\.dat/ wide ascii
-
-    condition:
-        any of them
-}
-
-rule FinSpy_MouseRecorder
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /(m)sc183Q000\.dat/ wide ascii
-        $2 = /2201[0-9A-F]{8}\.dat/ wide ascii
-
-    condition:
-        any of them
-}
-
-rule FinSpy_Driver
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /\\\\\\\\\.\\\\driverw/ wide ascii
-
-    condition:
-        any of them
-}
-
-rule FinSpy_Mutexes
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /(W)ininetProxyMutex/ wide ascii
-        $2 = /(W)ininetProxyExit/ wide ascii
-        $3 = /(W)ininetProxyMemory/ wide ascii
-
-    condition:
-        any of them
-}
-
-rule FinSpy_Typo
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /(S)creenShort Recording/ wide ascii
-
-    condition:
-        $1
-}
-
-rule FinSpy_JaneDow
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /(J)ane Dow\'s x32 machine/ wide ascii
-        $2 = /(J)ane Dow\'s x64 machine/ wide ascii
-
-    condition:
-        any of them
-}
-
-rule FinSpy_Versions
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /(f)inspyv2/ nocase
-        $2 = /(f)inspyv4/ nocase
-
-    condition:
-        any of them
-}
-
-rule FinSpy_Bootkit
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /(b)ootkit_x32driver/
-        $2 = /(b)ootkit_x64driver/
-
-    condition:
-        any of them
-}
-
-rule FinSpy_Encryption
-{
-    meta:
-        detection = "FinFisher FinSpy"
-
-    strings:
-        $1 = /\\x90\\x03\\xFE\\x00\\xFA\\xF9\\xF8\\xFF/
-        $2 = /\\x90\\x03\\xFE\\x00\\xEA\\xE9\\xE8\\xFF/
-
-    condition:
-        any of them
+        any of ($password*) or any of ($screenrec*) or any of ($keylogger*) or $micrec or any of ($skyperec*) or any of ($mouserec*) or $driver or any of ($janedow*) or any of ($versions*) or any of ($bootkit*)
 }
