@@ -52,35 +52,19 @@ class Service(object):
 
             time.sleep(1)
 
-    def create(self):
-        if not self.driver or not os.path.exists(self.driver):
-            raise DetectorError("The driver does not exist at path: {0}".format(self.driver))
-
-        # TODO: The following procedure is hacky and ugly and it needs to be
-        # cleaned up.
-
+    def open(self):
         try:
             self.service = win32service.OpenService(
                 self.manager,
                 self.service_name,
                 win32service.SERVICE_ALL_ACCESS
             )
-        except:
-            pass
-
-        try:
-            if self.service:
-                log.debug("The service appear to exist already, let's try to delete it...")
-
-                try:
-                    self.stop()
-                except:
-                    pass
-
-                self.delete()
         except Exception as e:
-            log.warning(e)
-            pass
+            log.debug("Unable to OpenService: {0}".format(e))
+
+    def create(self):
+        if not self.driver or not os.path.exists(self.driver):
+            raise DetectorError("The driver does not exist at path: {0}".format(self.driver))
 
         try:
             if not self.service:
@@ -95,9 +79,6 @@ class Service(object):
                     self.driver,
                     None, 0, None, None, None
                 )
-            else:
-                raise DetectorError("Unable to create service: another service already exists,"
-                                    " try to restart the computer.")
         except Exception as e:
             raise DetectorError("Unable to create service: {0}".format(e))
 
@@ -137,3 +118,23 @@ class Service(object):
             win32service.CloseServiceHandle(self.manager)
         except Exception as e:
             raise DetectorError("Unable to delete the service: {0}".format(e))
+
+def destroy(driver, service):
+    log.info("Launching service destroyer...")
+
+    service = Service(driver, service)
+    try:
+        service.open()
+    except Exception as e:
+        log.debug(e)
+        return
+
+    try:
+        service.stop()
+    except:
+        pass
+
+    try:
+        service.delete()
+    except Exception as e:
+        log.debug(e)

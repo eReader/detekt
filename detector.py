@@ -5,6 +5,7 @@
 import os
 import time
 import logging
+import threading
 import volatility.conf as conf
 import volatility.registry as registry
 import volatility.commands as commands
@@ -16,7 +17,7 @@ import messages
 from messages import *
 from abstracts import DetectorError
 from config import Config
-from service import Service
+from service import Service, destroy
 from utils import get_resource
 
 # Reduce noise from Volatility.
@@ -130,6 +131,13 @@ def main(queue_results, queue_errors):
 
     log.info("Selected Driver: {0}".format(cfg.driver))
 
+    # This is the ugliest black magic ever, but somehow helps.
+    # Just tries to brutally destroy the winpmem service if there is one
+    # lying around before trying to launch a new one again.
+    destroyer = threading.Thread(target=destroy, args=(cfg.driver, cfg.service_name))
+    destroyer.start()
+    destroyer.join()
+
     # Initialize the winpmem service.
     try:
         service = Service(driver=cfg.driver, service=cfg.service_name)
@@ -145,7 +153,9 @@ def main(queue_results, queue_errors):
     # Launch the scanner.
     try:
         log.info("Starting yara scanner...")
-        scan(cfg.service_path, cfg.profile, queue_results)
+        scanner = threading.Thread(target=scan, args=(cfg.service_path, cfg.profile, queue_results))
+        scanner.start()
+        scanner.join()
     except DetectorError as e:
         log.critical("Yara scanning failed: %s", e)
         queue_errors.put(messages.SCAN_FAILED)
@@ -161,6 +171,10 @@ def main(queue_results, queue_errors):
         log.error("Unable to stop winpmem service: %s", e)
     else:
         log.info("Service stopped")
+
+    # Launch destroyer.
+    destroyer.start()
+    destroyer.join()
 
     log.info("Analysis finished")
 
