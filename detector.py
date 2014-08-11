@@ -113,7 +113,8 @@ def main(queue_results, queue_errors):
 
     # Check if this is a supported version of Windows and if so, obtain the
     # volatility profile name.
-    if not cfg.get_profile_name():
+    cfg.get_profile_name()
+    if not cfg.profile:
         log.error("Unsupported version of Windows, can't select a profile")
         queue_errors.put(messages.UNSUPPORTED_WINDOWS)
         return

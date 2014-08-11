@@ -60,7 +60,6 @@ class Config(object):
         if windows_release == 'XP':
             if service_pack in ['SP2', 'SP3'] and self.architecture == 'x86':
                 self.profile = 'WinXP{0}{1}'.format(service_pack, self.architecture)
-                return True
         #elif windows_release == 'Vista':
         #    if service_pack in ['SP0', 'SP1', 'SP2']:
         #        self.profile = 'Vista{0}{1}'.format(service_pack, self.architecture)
@@ -68,14 +67,13 @@ class Config(object):
         elif windows_release == '7':
             if service_pack in ['SP0', 'SP1']:
                 self.profile = 'Win7{0}{1}'.format(service_pack, self.architecture)
-                return True
+        # NOTE: On older version of Python, Windows 8 is identified as post2008Server.
+        # Might need to add that as an option or make sure that the appropriate version
+        # of Python is installed on the compiler system.
         elif windows_release == '8':
             self.profile = 'Win8SP0{0}'.format(self.architecture)
-            return True
         elif windows_release == '8.1':
             self.profile = 'Win8SP1{0}'.format(self.architecture)
-            return True
 
         # By now, if the function didn't return yet, it means we have an
         # unsupported version of Windows.
-        return False
