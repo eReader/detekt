@@ -69,6 +69,12 @@ class Config(object):
             if service_pack in ['SP0', 'SP1']:
                 self.profile = 'Win7{0}{1}'.format(service_pack, self.architecture)
                 return True
+        elif windows_release == '8':
+            self.profile = 'Win8SP0{0}'.format(self.architecture)
+            return True
+        elif windows_release == '8.1':
+            self.profile = 'Win8SP1{0}'.format(self.architecture)
+            return True
 
         # By now, if the function didn't return yet, it means we have an
         # unsupported version of Windows.
