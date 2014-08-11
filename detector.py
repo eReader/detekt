@@ -98,6 +98,7 @@ def scan(service_path, profile_name, queue_results):
                     pid=pid,
                     ppid=ppid
                 ))
+        # TODO: Add support for matches in kernel space.
 
     # If any rule gets matched, we need to notify the user and instruct him
     # on how to proceed from here.
