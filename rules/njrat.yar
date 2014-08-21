@@ -36,5 +36,5 @@ rule njRAT
         $get29 = "get_WebServices"
 
     condition:
-        4 of them
+        10 of them
 }
