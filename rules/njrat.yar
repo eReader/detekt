@@ -1,8 +1,8 @@
-rule njRAT
+rule Njrat
 {
     meta:
-        detection = "njRAT"
-        description = "njRAT is a common off-the-shelf trojan which has recently gained popularity in the Middle-East."
+        detection = "Njrat"
+        description = "Njrat is a common off-the-shelf trojan which has recently gained popularity in the Middle-East."
 
     strings:
         $get1 = "get_Application"
