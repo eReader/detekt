@@ -2,12 +2,15 @@
 # This file is part of Detekt - https://github.com/botherder/detekt
 # See the file 'LICENSE' for copying permission.
 
+# This code is adapted from:
+# https://code.google.com/p/volatility/source/browse/branches/scudette/tools/windows/winpmem/winpmem.py?r=2722
+
 import os
+import logging
 import struct
 import win32file
 
-# This code is adapted from:
-# https://code.google.com/p/volatility/source/browse/branches/scudette/tools/windows/winpmem/winpmem.py?r=2722
+log = logging.getLogger('detector.memory')
 
 def CTL_CODE(DeviceType, Function, Method, Access):
     return (DeviceType<<16) | (Access << 14) | (Function << 2) | Method
@@ -27,6 +30,9 @@ class Memory(object):
               ['NumberOfRuns'])
 
     def __init__(self):
+        # Open a handle to the loaded Winpmem service.
+        # TODO: at some point we might want to randomize this in order
+        # to prevent detection.
         self.handle = win32file.CreateFile(
             '\\\\.\\pmem',
             win32file.GENERIC_READ | win32file.GENERIC_WRITE,
@@ -37,8 +43,11 @@ class Memory(object):
             None
         )
 
+        # Set the access mode.
         self.set_mode()
+        # Scan for the available memory ranges.
         self.parse_memory_ranges()
+        # Log some debug information, nothing important.
         self.get_info()
 
     def parse_memory_ranges(self):
@@ -83,6 +92,8 @@ class Memory(object):
             self.handle, CTRL_IOCTRL, struct.pack('I', mode), 0, None)
 
     def get_memory_chunks(self):
+        # This function should yield a maximum of 10MB sized memory chunks
+        # for each available range.
         offset = 0
         for start, length in self.ranges:
             offset = start
