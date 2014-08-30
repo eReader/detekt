@@ -4,55 +4,30 @@
 
 import os
 import time
+import yara
 import logging
 import threading
-import volatility.conf as conf
-import volatility.registry as registry
-import volatility.commands as commands
-import volatility.addrspace as addrspace
-import volatility.utils as utils
-import volatility.plugins.malware.malfind as malfind
 
 import messages
 from messages import *
 from abstracts import DetectorError
 from config import Config
-from service import Service, destroy
+from service import Service, destroy, Memory
 from utils import get_resource
-
-# Reduce noise from Volatility.
-logging.getLogger('volatility.obj').setLevel(logging.ERROR)
-logging.getLogger('volatility.utils').setLevel(logging.ERROR)
 
 # Configure logging for our main application.
 log = logging.getLogger('detector')
 log.propagate = 0
 fh = logging.FileHandler(os.path.join(os.getcwd(), 'detector.log'))
 sh = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s [%(name)s] %(levelname)s: %(message)s')
 fh.setFormatter(formatter)
 sh.setFormatter(formatter)
 log.addHandler(fh)
 log.addHandler(sh)
 log.setLevel(logging.DEBUG)
 
-def get_address_space(service_path, profile, yara_path):
-    log.info("Obtaining address space and generating config for volatility")
-
-    registry.PluginImporter()
-    config = conf.ConfObject()
-
-    registry.register_global_options(config, commands.Command)
-    registry.register_global_options(config, addrspace.BaseAddressSpace)
-
-    config.parse_options()
-    config.PROFILE = profile
-    config.LOCATION = service_path
-    config.YARA_FILE = yara_path
-
-    return utils.load_as(config)
-
-def scan(service_path, profile_name, queue_results):
+def scan(queue_results):
     # Find Yara signatures, if file is not available, we need to terminate.
     yara_path = os.path.join(os.getcwd(), 'signatures.yar')
     if not os.path.exists(yara_path):
@@ -62,44 +37,35 @@ def scan(service_path, profile_name, queue_results):
 
     log.info("Selected Yara signature file at %s", yara_path)
 
-    space = get_address_space(service_path, profile_name, yara_path)
-    yara = malfind.YaraScan(space.get_config())
+    # Compile Yara signatures.
+    rules = yara.compile(yara_path)
+    # Instantiate memory crawler.
+    memory = Memory()
 
     matched = []
-    for o, address, hit, value in yara.calculate():
-        if not o:
-            continue
-        elif o.obj_name == '_EPROCESS':
-            # If the PID is of the current process, it's a false positive.
-            # It just detected the Yara signatures in memory. Skip.
-            if int(o.UniqueProcessId) == int(os.getpid()):
-                continue
-
+    # Perform a Yara scan on each chunk of memory that is retrieved from
+    # the memory ranges crawler.
+    for data in memory.get_memory_chunks():
+        # For each Yara signature that is matched...
+        for hit in rules.match(data=data):
+            # We only store unique results, it's pointless to store results
+            # for the same rule.
             if not hit.rule in matched:
-                # Add the rule to the list of matched rules, so we don't have
-                # useless repetitions.
                 matched.append(hit.rule)
-                # ID of the process matching the signature.
-                pid = o.UniqueProcessId
-                # Parent ID of the process matching the signature.
-                ppid = o.InheritedFromUniqueProcessId
-    
-                # Extract hexdump of the memory chunk that matched the signature.
-                rule_data = ''
-                for offset, hexdata, translated_data in utils.Hexdump(value):
-                    rule_data += '{0} {1}\n'.format(hexdata, ''.join(translated_data))
 
-                log.warning("Matched: %s, PID: %s, PPID: %s, Address: %s, Value:\n\n%s",
-                            hit.rule, pid, ppid, address, rule_data)
+                # Log which strings specifically were matched.
+                log.warning("Matched: %s, Strings:", hit.rule)
+                counter = 1
+                for entry in hit.strings:
+                    log.warning("\t(%s) %s -> %s", counter, entry[0], entry[2])
+                    counter += 1
 
+                # Add match to the list of results.
                 queue_results.put(dict(
                     rule=hit.rule,
                     detection=hit.meta.get('detection'),
-                    description=hit.meta.get('description'),
-                    pid=pid,
-                    ppid=ppid
+                    description=hit.meta.get('description')
                 ))
-        # TODO: Add support for matches in kernel space.
 
     # If any rule gets matched, we need to notify the user and instruct him
     # on how to proceed from here.
@@ -111,16 +77,6 @@ def scan(service_path, profile_name, queue_results):
 def main(queue_results, queue_errors):
     # Generate configuration values.
     cfg = Config()
-
-    # Check if this is a supported version of Windows and if so, obtain the
-    # volatility profile name.
-    cfg.get_profile_name()
-    if not cfg.profile:
-        log.error("Unsupported version of Windows, can't select a profile")
-        queue_errors.put(messages.UNSUPPORTED_WINDOWS)
-        return
-
-    log.info("Selected Profile Name: {0}".format(cfg.profile))
 
     # Obtain the path to the driver to load. At this point, this check should
     # not fail, but you never know.
@@ -153,7 +109,7 @@ def main(queue_results, queue_errors):
     # Launch the scanner.
     try:
         log.info("Starting yara scanner...")
-        scanner = threading.Thread(target=scan, args=(cfg.service_path, cfg.profile, queue_results))
+        scanner = threading.Thread(target=scan, args=(queue_results,))
         scanner.start()
         scanner.join()
     except DetectorError as e:

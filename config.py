@@ -14,7 +14,6 @@ class Config(object):
     def __init__(self):
         self.architecture = ''
         self.driver = ''
-        self.profile = ''
         self.service_name = 'pmem' # TODO: Randomize service name?
         self.service_path = '\\\\.\\{0}'.format(self.service_name)
 
@@ -46,34 +45,3 @@ class Config(object):
             return True
 
         return False
-
-    def get_profile_name(self):
-        # Get architecture.
-        self.get_architecture()
-
-        # Obtain release details on current version of Windows.
-        windows_release, version, service_pack, processor = platform.win32_ver()
-        if not service_pack:
-            service_pack = 'SP0'
-
-        # Check for supported version of Windows.
-        if windows_release == 'XP':
-            if service_pack in ['SP2', 'SP3'] and self.architecture == 'x86':
-                self.profile = 'WinXP{0}{1}'.format(service_pack, self.architecture)
-        #elif windows_release == 'Vista':
-        #    if service_pack in ['SP0', 'SP1', 'SP2']:
-        #        self.profile = 'Vista{0}{1}'.format(service_pack, self.architecture)
-        #        return True
-        elif windows_release == '7':
-            if service_pack in ['SP0', 'SP1']:
-                self.profile = 'Win7{0}{1}'.format(service_pack, self.architecture)
-        # NOTE: On older version of Python, Windows 8 is identified as post2008Server.
-        # Might need to add that as an option or make sure that the appropriate version
-        # of Python is installed on the compiler system.
-        elif windows_release == '8':
-            self.profile = 'Win8SP0{0}'.format(self.architecture)
-        elif windows_release == '8.1':
-            self.profile = 'Win8SP1{0}'.format(self.architecture)
-
-        # By now, if the function didn't return yet, it means we have an
-        # unsupported version of Windows.
