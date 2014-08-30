@@ -9,10 +9,10 @@ import logging
 import threading
 
 import messages
-from messages import *
 from abstracts import DetectorError
 from config import Config
-from service import Service, destroy, Memory
+from service import Service, destroy
+from memory import Memory
 from utils import get_resource
 
 # Configure logging for our main application.
