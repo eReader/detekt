@@ -27,6 +27,9 @@ log.addHandler(fh)
 log.addHandler(sh)
 log.setLevel(logging.DEBUG)
 
+# Turn off to remove debug features.
+DEBUG = True
+
 def scan(queue_results):
     # Find Yara signatures, if file is not available, we need to terminate.
     yara_path = os.path.join(os.getcwd(), 'signatures.yar')
@@ -42,19 +45,32 @@ def scan(queue_results):
     # Instantiate memory crawler.
     memory = Memory()
 
+    counter = 1
     matched = []
     # Perform a Yara scan on each chunk of memory that is retrieved from
     # the memory ranges crawler.
     for data in memory.get_memory_chunks():
+        # If debug is enabled, dump the matched rule
+        if DEBUG:
+            if not os.path.exists('segments'):
+                os.makedirs('segments')
+
+            with open(os.path.join('segments', 'segment_{0}.bin'.format(counter)), 'wb') as dump:
+                dump.write(data)
+
         # For each Yara signature that is matched...
         for hit in rules.match(data=data):
+            log.debug("Matched: %s, in segment #%d", hit.rule, counter)
+
             # We only store unique results, it's pointless to store results
             # for the same rule.
             if not hit.rule in matched:
+                # Add rule to the list of unique matches.
                 matched.append(hit.rule)
 
                 # Log which strings specifically were matched.
-                log.warning("Matched: %s, Strings:", hit.rule)
+                log.warning("New match: %s, Strings:", hit.rule)
+
                 counter = 1
                 for entry in hit.strings:
                     log.warning("\t(%s) %s -> %s", counter, entry[0], entry[2])
@@ -66,6 +82,8 @@ def scan(queue_results):
                     detection=hit.meta.get('detection'),
                     description=hit.meta.get('description')
                 ))
+
+        counter += 1
 
     # If any rule gets matched, we need to notify the user and instruct him
     # on how to proceed from here.

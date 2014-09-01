@@ -33,14 +33,14 @@ rule RCS_Backdoor
         description = "This is a very sophisticated backdoor produced by an Italian company and sold to government agencies worldwide. You might be targeted by yours or a foreign government. You should be really careful on your next steps in order to not further jeopardize your situation."
 
     strings:
-        $debug1 = /\- Checking components/ wide ascii
-        $debug2 = /\- Activating hiding system/ wide ascii
+        $debug1 = /\- (C)hecking components/ wide ascii
+        $debug2 = /\- (A)ctivating hiding system/ wide ascii
         $debug3 = /(f)ully operational/ wide ascii
 
         $log1 = /\- Browser activity \(FF\)/ wide ascii
         $log2 = /\- Browser activity \(IE\)/ wide ascii
-        $log3 = /\- About to call init routine at %p/ wide ascii
-        $log4 = /\- Calling init routine at %p/ wide ascii
+        $log3 = /\- (A)bout to call init routine at %p/ wide ascii
+        $log4 = /\- (C)alling init routine at %p/ wide ascii
 
         $error1 = /\[Unable to deploy\]/ wide ascii
         $error2 = /\[The system is already monitored\]/ wide ascii

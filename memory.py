@@ -10,6 +10,8 @@ import logging
 import struct
 import win32file
 
+from utils import get_md5
+
 log = logging.getLogger('detector.memory')
 
 def CTL_CODE(DeviceType, Function, Method, Access):
@@ -106,5 +108,7 @@ class Memory(object):
                 _, data = win32file.ReadFile(self.handle, to_read)
 
                 offset += to_read
+
+                log.debug("Retrieved chunk at offset 0x%X with MD5 %s", offset, get_md5(data))
 
                 yield(data)

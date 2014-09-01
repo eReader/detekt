@@ -5,6 +5,7 @@
 import os
 import sys
 import ctypes
+import hashlib
 
 def get_resource(relative):
     # First try from the local directory. This might come handy in case we want
@@ -30,3 +31,9 @@ def check_connection():
         return True
     else:
         return False
+
+# Get MD5 hash of a given buffer.
+def get_md5(data):
+    md5 = hashlib.md5()
+    md5.update(data)
+    return md5.hexdigest()
