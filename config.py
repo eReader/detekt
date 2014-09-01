@@ -8,9 +8,10 @@ import platform
 
 from utils import get_resource
 
-class Config(object):
-    # TODO: Make Singleton?
+# Turn off to remove debug features.
+DEBUG = True
 
+class Config(object):
     def __init__(self):
         self.architecture = ''
         self.driver = ''

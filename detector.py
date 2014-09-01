@@ -10,7 +10,7 @@ import threading
 
 import messages
 from abstracts import DetectorError
-from config import Config
+from config import Config, DEBUG
 from service import Service, destroy
 from memory import Memory
 from utils import get_resource
@@ -26,9 +26,6 @@ sh.setFormatter(formatter)
 log.addHandler(fh)
 log.addHandler(sh)
 log.setLevel(logging.DEBUG)
-
-# Turn off to remove debug features.
-DEBUG = True
 
 def scan(queue_results):
     # Find Yara signatures, if file is not available, we need to terminate.

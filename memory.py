@@ -11,6 +11,7 @@ import struct
 import win32file
 
 from utils import get_md5
+from config import DEBUG
 
 log = logging.getLogger('detector.memory')
 
@@ -50,7 +51,8 @@ class Memory(object):
         # Scan for the available memory ranges.
         self.parse_memory_ranges()
         # Log some debug information, nothing important.
-        self.get_info()
+        if DEBUG:
+            self.get_info()
 
     def parse_memory_ranges(self):
         self.ranges = []
@@ -109,6 +111,7 @@ class Memory(object):
 
                 offset += to_read
 
-                log.debug("Retrieved chunk at offset 0x%X with MD5 %s", offset, get_md5(data))
+                if DEBUG:
+                    log.debug("Retrieved chunk at offset 0x%X with MD5 %s", offset, get_md5(data))
 
                 yield(data)
