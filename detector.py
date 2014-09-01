@@ -80,14 +80,10 @@ def scan(queue_results):
                     description=hit.meta.get('description')
                 ))
 
+        # Increment segment counter.
         counter += 1
 
-    # If any rule gets matched, we need to notify the user and instruct him
-    # on how to proceed from here.
-    if len(matched) > 0:
-        return True
-    else:
-        return False
+    log.info("Total number of unique matched rules: %d", len(matched))
 
 def main(queue_results, queue_errors):
     # Generate configuration values.
@@ -124,9 +120,10 @@ def main(queue_results, queue_errors):
     # Launch the scanner.
     try:
         log.info("Starting yara scanner...")
-        scanner = threading.Thread(target=scan, args=(queue_results,))
-        scanner.start()
-        scanner.join()
+        #scanner = threading.Thread(target=scan, args=(queue_results,))
+        #scanner.start()
+        #scanner.join()
+        scan(queue_results)
     except DetectorError as e:
         log.critical("Yara scanning failed: %s", e)
         queue_errors.put(messages.SCAN_FAILED)
