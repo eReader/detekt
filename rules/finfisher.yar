@@ -5,7 +5,7 @@ rule FinSpy
         description = "This is a very sophisticated backdoor produced by a German company and sold to government agencies worldwide. You might be targeted by yours or a foreign government. You should be really careful on your next steps in order to not further jeopardize your situation."
 
     strings:
-        $filter1 = "detekt" nocase
+        //$filter1 = "detekt" nocase
         $filter2 = "rule FinSpy"
         $filter3 = "$password1"
         $filter4 = "$screenrec1"
@@ -60,5 +60,6 @@ rule FinSpy
         $bootkit2 = /(b)ootkit_x64driver/
 
     condition:
-        (all of ($password*) or any of ($screenrec*) or any of ($keylogger*) or $micrec or any of ($skyperec*) or any of ($mouserec*) or $driver or any of ($janedow*) or any of ($versions*) or any of ($bootkit*)) and not any of ($filter*)
+        //(all of ($password*) or any of ($screenrec*) or any of ($keylogger*) or $micrec or any of ($skyperec*) or any of ($mouserec*) or $driver or any of ($janedow*) or any of ($versions*) or any of ($bootkit*)) and not any of ($filter*)
+        5 of them and not any of ($filter*)
 }

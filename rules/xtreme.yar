@@ -5,7 +5,7 @@ rule Xtreme
         description = "This is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless."
 
     strings:
-        $filter1 = "detekt" nocase
+        //$filter1 = "detekt" nocase
         $filter2 = "rule Xtreme"
         $filter3 = "$string1"
         $filter4 = "$unit1"

@@ -5,7 +5,7 @@ rule RCS_Scout
         description = "This is a very sophisticated backdoor produced by an Italian company and sold to government agencies worldwide. You might be targeted by yours or a foreign government. You should be really careful on your next steps in order to not further jeopardize your situation."
 
     strings:
-        $filter1 = "detekt" nocase
+        //$filter1 = "detekt" nocase
         $filter2 = "rule RCS_Scout"
         $filter3 = "$format1"
         $filter4 = "$engine1"
@@ -40,7 +40,7 @@ rule RCS_Backdoor
         description = "This is a very sophisticated backdoor produced by an Italian company and sold to government agencies worldwide. You might be targeted by yours or a foreign government. You should be really careful on your next steps in order to not further jeopardize your situation."
 
     strings:
-        $filter1 = "detekt" nocase
+        //$filter1 = "detekt" nocase
         $filter2 = "rule RCS_Backdoor"
         $filter3 = "$debug1"
         $filter4 = "$log1"

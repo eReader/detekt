@@ -62,8 +62,8 @@ def scan(queue_results):
             # For each matched string let's log some details.
             counter = 1
             for entry in hit.strings:
-                # Log offset and rule.
-                log.warning("\t(%s) %s -> %s", counter, entry[0], entry[2])
+                # Log offset.
+                log.warning("\t(%s) %s:", counter, entry[0])
 
                 # Log a short hexdump of the interested segment.
                 hexdata = hexdump(data[entry[0]:], maxlines=10)
