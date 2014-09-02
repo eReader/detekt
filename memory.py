@@ -13,7 +13,7 @@ import win32file
 from utils import get_md5
 from config import DEBUG
 
-log = logging.getLogger('detector.memory')
+log = logging.getLogger('detekt.memory')
 
 def CTL_CODE(DeviceType, Function, Method, Access):
     return (DeviceType<<16) | (Access << 14) | (Function << 2) | Method

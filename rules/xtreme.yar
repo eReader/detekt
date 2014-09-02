@@ -5,6 +5,11 @@ rule Xtreme
         description = "This is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless."
 
     strings:
+        $filter1 = "detekt" nocase
+        $filter2 = "rule Xtreme"
+        $filter3 = "$string1"
+        $filter4 = "$unit1"
+
         $string1 = /(X)tremeKeylogger/ wide ascii
         $string2 = /(X)tremeRAT/ wide ascii
         $string3 = /(X)TREMEUPDATE/ wide ascii
@@ -20,5 +25,5 @@ rule Xtreme
         $unit8 = /(U)nitInjectProcess/ wide ascii
 
     condition:
-        any of ($string*) or 3 of ($unit*)
+        (any of ($string*) or 3 of ($unit*)) and not any of ($filter*)
 }

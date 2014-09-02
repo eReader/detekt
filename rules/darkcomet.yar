@@ -5,6 +5,13 @@ rule DarkComet
         description = "This is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless."
 
     strings:
+        $filter1 = "detekt" nocase
+        $filter2 = "rule DarkComet"
+        $filter3 = "$bot1"
+        $filter4 = "$ddos1"
+        $filter5 = "$keylogger1"
+        $filter6 = "$shell1"
+
         $bot1 = /(#)BOT#OpenUrl/ wide ascii
         $bot2 = /(#)BOT#Ping/ wide ascii
         $bot3 = /(#)BOT#RunPrompt/ wide ascii
@@ -28,5 +35,5 @@ rule DarkComet
         $shell3 = /(K)ILLREMOTESHELL/ wide ascii
 
     condition:
-        4 of ($bot*) or all of ($ddos*) or all of ($keylogger*) or all of ($shell*)
+        (4 of ($bot*) or all of ($ddos*) or all of ($keylogger*) or all of ($shell*)) and not any of ($filter*)
 }

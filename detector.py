@@ -16,9 +16,9 @@ from memory import Memory
 from utils import get_resource, hexdump
 
 # Configure logging for our main application.
-log = logging.getLogger('detector')
+log = logging.getLogger('detekt')
 log.propagate = 0
-fh = logging.FileHandler(os.path.join(os.getcwd(), 'detector.log'))
+fh = logging.FileHandler(os.path.join(os.getcwd(), 'detekt.log'))
 sh = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s [%(name)s] %(levelname)s: %(message)s')
 fh.setFormatter(formatter)
@@ -59,27 +59,24 @@ def scan(queue_results):
         for hit in rules.match(data=data):
             log.debug("Matched: %s, in segment #%d", hit.rule, counter)
 
+            # For each matched string let's log some details.
+            counter = 1
+            for entry in hit.strings:
+                # Log offset and rule.
+                log.warning("\t(%s) %s -> %s", counter, entry[0], entry[2])
+
+                # Log a short hexdump of the interested segment.
+                hexdata = hexdump(data[entry[0]:], maxlines=10)
+                for line in hexdata:
+                    log.debug("\t\t%s", line)
+
+                counter += 1
+
             # We only store unique results, it's pointless to store results
             # for the same rule.
             if not hit.rule in matched:
                 # Add rule to the list of unique matches.
                 matched.append(hit.rule)
-
-                # Log which strings specifically were matched.
-                log.warning("New match: %s, Strings:", hit.rule)
-
-                # For each matched string let's log some details.
-                counter = 1
-                for entry in hit.strings:
-                    # Log offset and rule.
-                    log.warning("\t(%s) %s -> %s", counter, entry[0], entry[2])
-
-                    # Log a short hexdump of the interested segment.
-                    hexdata = hexdump(data[entry[0]:], maxlines=10)
-                    for line in hexdata:
-                        log.debug("\t\t%s", line)
-
-                    counter += 1
 
                 # Add match to the list of results.
                 queue_results.put(dict(

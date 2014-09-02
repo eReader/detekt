@@ -11,7 +11,7 @@ from threading import Timer, Event
 from config import Config
 from abstracts import DetectorError
 
-log = logging.getLogger('detector.service')
+log = logging.getLogger('detekt.service')
 
 SERVICE_WAIT_TIMEOUT = 30
 
