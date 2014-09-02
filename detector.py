@@ -13,7 +13,7 @@ from abstracts import DetectorError
 from config import Config, DEBUG
 from service import Service, destroy
 from memory import Memory
-from utils import get_resource
+from utils import get_resource, hexdump
 
 # Configure logging for our main application.
 log = logging.getLogger('detector')
@@ -68,9 +68,17 @@ def scan(queue_results):
                 # Log which strings specifically were matched.
                 log.warning("New match: %s, Strings:", hit.rule)
 
+                # For each matched string let's log some details.
                 counter = 1
                 for entry in hit.strings:
+                    # Log offset and rule.
                     log.warning("\t(%s) %s -> %s", counter, entry[0], entry[2])
+
+                    # Log a short hexdump of the interested segment.
+                    hexdata = hexdump(data[entry[0]:], maxlines=10)
+                    for line in hexdata:
+                        log.debug("\t\t%s", line)
+
                     counter += 1
 
                 # Add match to the list of results.
