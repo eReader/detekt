@@ -153,9 +153,10 @@ def main(queue_results, queue_errors):
     # Launch the scanner.
     try:
         log.info("Starting yara scanner...")
-        scanner = threading.Thread(target=scan, args=(cfg.service_path, cfg.profile, queue_results))
-        scanner.start()
-        scanner.join()
+        #scanner = threading.Thread(target=scan, args=(cfg.service_path, cfg.profile, queue_results))
+        #scanner.start()
+        #scanner.join()
+        scan(cfg.service_path, cfg.profile, queue_results)
     except DetectorError as e:
         log.critical("Yara scanning failed: %s", e)
         queue_errors.put(messages.SCAN_FAILED)
