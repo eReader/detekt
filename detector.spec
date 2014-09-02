@@ -27,4 +27,4 @@ exe = EXE(pyz,
           strip=False,
           upx=False,
           console=True, # TODO: Turn to False when finished developing.
-          icon='magnify.exe,0')
+          icon='detekt.ico')

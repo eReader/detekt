@@ -39,8 +39,10 @@ rule RCS_Backdoor
 
         $log1 = /\- Browser activity \(FF\)/ wide ascii
         $log2 = /\- Browser activity \(IE\)/ wide ascii
-        $log3 = /\- About to call init routine at %p/ wide ascii
-        $log4 = /\- Calling init routine at %p/ wide ascii
+        
+        // Cause false positives.
+        //$log3 = /\- About to call init routine at %p/ wide ascii
+        //$log4 = /\- Calling init routine at %p/ wide ascii
 
         $error1 = /\[Unable to deploy\]/ wide ascii
         $error2 = /\[The system is already monitored\]/ wide ascii
