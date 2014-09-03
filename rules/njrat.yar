@@ -24,5 +24,5 @@ rule Njrat
         $string17 = {7C 00 27 00 7C 00 27 00 7C}
 
     condition:
-        12 of them
+        10 of them
 }
