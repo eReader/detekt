@@ -52,5 +52,5 @@ rule FinSpy
         $bootkit2 = /(b)ootkit_x64driver/
 
     condition:
-        any of ($password*) or any of ($screenrec*) or any of ($keylogger*) or $micrec or any of ($skyperec*) or any of ($mouserec*) or $driver or any of ($janedow*) or any of ($versions*) or any of ($bootkit*)
+        8 of ($password*) or any of ($screenrec*) or any of ($keylogger*) or $micrec or any of ($skyperec*) or any of ($mouserec*) or $driver or any of ($janedow*) or any of ($versions*) or any of ($bootkit*)
 }
