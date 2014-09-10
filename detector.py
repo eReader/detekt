@@ -12,6 +12,7 @@ import volatility.commands as commands
 import volatility.addrspace as addrspace
 import volatility.utils as utils
 import volatility.plugins.malware.malfind as malfind
+from win32com.shell import shell
 
 import messages
 from messages import *
@@ -108,6 +109,13 @@ def scan(service_path, profile_name, queue_results):
 
 def main(queue_results, queue_errors):
     log.info("Starting with process ID %d", os.getpid())
+
+    # Check if the user is an Administrator.
+    # If not, quit with an error message.
+    if not shell.IsUserAnAdmin():
+        log.error("The user is not an Administrator, aborting")
+        queue_errors.put(messages.NOT_AN_ADMIN)
+        return
 
     # Generate configuration values.
     cfg = Config()
