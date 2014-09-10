@@ -4,13 +4,33 @@
 
 import os
 import shutil
+import ctypes
 import platform
 
 from utils import get_resource
 
-class Config(object):
-    # TODO: Make Singleton?
+class OSVERSIONINFOEXW(ctypes.Structure):
+    _fields_ = [
+        ('dwOSVersionInfoSize', ctypes.c_ulong),
+        ('dwMajorVersion', ctypes.c_ulong),
+        ('dwMinorVersion', ctypes.c_ulong),
+        ('dwBuildNumber', ctypes.c_ulong),
+        ('dwPlatformId', ctypes.c_ulong),
+        ('szCSDVersion', ctypes.c_wchar*128),
+        ('wServicePackMajor', ctypes.c_ushort),
+        ('wServicePackMinor', ctypes.c_ushort),
+        ('wSuiteMask', ctypes.c_ushort),
+        ('wProductType', ctypes.c_byte),
+        ('wReserved', ctypes.c_byte)
+    ]
 
+def get_os_version():
+    os_version = OSVERSIONINFOEXW()
+    os_version.dwOSVersionInfoSize = ctypes.sizeof(os_version)
+    retcode = ctypes.windll.Ntdll.RtlGetVersion(ctypes.byref(os_version))
+    return os_version.dwMajorVersion, os_version.dwMinorVersion
+
+class Config(object):
     def __init__(self):
         self.architecture = ''
         self.driver = ''
@@ -71,7 +91,16 @@ class Config(object):
         # Might need to add that as an option or make sure that the appropriate version
         # of Python is installed on the compiler system.
         elif windows_release == '8':
-            self.profile = 'Win8SP0{0}'.format(self.architecture)
+            windows_major, windows_minor = get_os_version()
+
+            # From Windows 8.1, Microsoft changed the way the underlying version
+            # functions work. Python is currently not able to identify Windows 8.1
+            # correctly, so we need to invoke Windows native RtlGetVersion function.
+            # If it's 6.3.x, it's Windows 8.1.
+            if windows_major == 6 and windows_minor == 3:
+                self.profile = 'Win8SP1{0}'.format(self.architecture)
+            else:
+                self.profile = 'Win8SP0{0}'.format(self.architecture)
         elif windows_release == '8.1':
             self.profile = 'Win8SP1{0}'.format(self.architecture)
 

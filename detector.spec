@@ -26,5 +26,5 @@ exe = EXE(pyz,
           debug=False,
           strip=False,
           upx=False,
-          console=False, # TODO: Turn to False when finished developing.
+          console=True, # TODO: Turn to False when finished developing.
           icon='detekt.ico')
