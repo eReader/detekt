@@ -56,7 +56,17 @@
                      Some <strong>errors occurred</strong> that might have affected the outcome of the scan:
                     <ul>
                         % for error in errors:
-                            <li>{{error}}</li>
+                            % if error == 'NOT_AN_ADMIN':
+                                <li>You need to run the application as an Administrator!</li>
+                            % elif error == 'UNSUPPORTED_WINDOWS':
+                                <li>You are running an unsupported version of Microsoft Windows.</li>
+                            % elif error == 'NO_DRIVER':
+                                <li>Can't find a suitable driver to be used.</li>l
+                            % elif error == 'SERVICE_NO_START':
+                                <li>Can't start the service, try to restart the application or the computer if that didn't help.</li>
+                            % elif error == 'SCAN_FAILED':
+                                <li>The scanning failed, try reinstalling the tool. If that doesn't help, provide the log file to your point of contact to investigate the issue.</li>
+                            % end
                         % end
                     </ul>
                 </div>
@@ -69,7 +79,7 @@
 
                     <p>Following is what I discovered:</p>
                     <ul>
-                        % for detection, description in results.items():
+                        % for detection in results.items():
                             <li><strong>{{detection}}</strong><br />
                             % if detection == 'BlackShades RAT':
                                 This is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless.
@@ -83,7 +93,7 @@
                             % elif detection == 'Njrat':
                                 Njrat is a common off-the-shelf trojan which has recently gained popularity in the Middle-East.
 
-                            % elif detection == 'Hacking Team RCS Scout' or detection = 'Hacking Team RCS Backdoor':
+                            % elif detection == 'Hacking Team RCS Scout' or detection == 'Hacking Team RCS Backdoor':
                                 This is a very sophisticated backdoor produced by an Italian company and sold to government agencies worldwide. You might be targeted by yours or a foreign government. You should be really careful on your next steps in order to not further jeopardize your situation.
 
                             % elif detection == 'ShadowTech RAT':

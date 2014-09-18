@@ -14,8 +14,6 @@ import volatility.utils as utils
 import volatility.plugins.malware.malfind as malfind
 from win32com.shell import shell
 
-import messages
-from messages import *
 from abstracts import DetectorError
 from config import Config
 from service import Service, destroy
@@ -113,7 +111,7 @@ def main(queue_results, queue_errors):
     # If not, quit with an error message.
     if not shell.IsUserAnAdmin():
         log.error("The user is not an Administrator, aborting")
-        queue_errors.put(messages.NOT_AN_ADMIN)
+        queue_errors.put('NOT_AN_ADMIN')
         return
 
     # Generate configuration values.
@@ -124,7 +122,7 @@ def main(queue_results, queue_errors):
     cfg.get_profile_name()
     if not cfg.profile:
         log.error("Unsupported version of Windows, can't select a profile")
-        queue_errors.put(messages.UNSUPPORTED_WINDOWS)
+        queue_errors.put('UNSUPPORTED_WINDOWS')
         return
 
     log.info("Selected Profile Name: {0}".format(cfg.profile))
@@ -133,7 +131,7 @@ def main(queue_results, queue_errors):
     # not fail, but you never know.
     if not cfg.get_driver_path():
         log.error("Unable to find a proper winpmem driver")
-        queue_errors.put(messages.NO_DRIVER)
+        queue_errors.put('NO_DRIVER')
         return
 
     log.info("Selected Driver: {0}".format(cfg.driver))
@@ -152,7 +150,7 @@ def main(queue_results, queue_errors):
         service.start()
     except DetectorError as e:
         log.critical("Unable to start winpmem service: %s", e)
-        queue_errors.put(messages.SERVICE_NO_START)
+        queue_errors.put('SERVICE_NO_START')
         return
     else:
         log.info("Service started")
@@ -162,7 +160,7 @@ def main(queue_results, queue_errors):
         scan(cfg.service_path, cfg.profile, queue_results)
     except DetectorError as e:
         log.critical("Yara scanning failed: %s", e)
-        queue_errors.put(messages.SCAN_FAILED)
+        queue_errors.put('SCAN_FAILED')
     else:
         log.info("Scanning finished")
 
