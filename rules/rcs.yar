@@ -31,8 +31,8 @@ rule RCS_Backdoor
         detection = "Hacking Team RCS Backdoor"
 
     strings:
-        $debug1 = /\- Checking components/ wide ascii
-        $debug2 = /\- Activating hiding system/ wide ascii
+        $debug1 = /\- (C)hecking components/ wide ascii
+        $debug2 = /\- (A)ctivating hiding system/ wide ascii
         $debug3 = /(f)ully operational/ wide ascii
 
         $log1 = /\- Browser activity \(FF\)/ wide ascii

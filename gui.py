@@ -4,6 +4,7 @@
 
 import sys
 import Queue
+import random
 import threading
 
 from PyQt4.QtCore import *
@@ -29,6 +30,12 @@ queue_errors = Queue.Queue()
 scanner = threading.Thread(target=detector.main, args=(queue_results, queue_errors))
 scanner.daemon = True
 
+# Enabled language.
+language = 'en'
+
+# Port for the web server.
+web_port = random.randint(1024, 65535)
+
 # This route serves static content such as images, css and js files.
 @webapp.route('/static/<path:path>')
 def static(path):
@@ -38,21 +45,21 @@ def static(path):
 @webapp.route('/')
 def index():
     connection = check_connection()
-    return template('index', action='start', connection=connection)
+    return template('index.{0}'.format(language), action='start', connection=connection)
 
 # This route triggers the execution of the detector then returns the running
 # page which will then start refreshing to /check.
 @webapp.route('/scan')
 def scan():
     scanner.start()
-    return template('index', action='running')
+    return template('index.{0}'.format(language), action='running')
 
 # This route checks whether the scanner thread has finished, and if so it
 # will collect errors and results and return the results page.
 @webapp.route('/check')
 def check():
     if scanner.isAlive():
-        return template('index', action='running')
+        return template('index.{0}'.format(language), action='running')
     else:
         # Flag if the detector generated any matches.
         infected = False
@@ -81,7 +88,7 @@ def check():
             except Queue.Empty:
                 break
 
-        return template('index', action='results', infected=infected,
+        return template('index.{0}'.format(language), action='results', infected=infected,
                         errors=errors, results=results)
 
 # This thread will run the bottle.py web app. I should probably randomize
@@ -91,7 +98,7 @@ class WebApp(QThread):
         QThread.__init__(self)
 
     def run(self):
-        run(webapp, host='localhost', port=31337, quiet=True)
+        run(webapp, host='localhost', port=web_port, quiet=True)
 
 # Define the Qt window, resizable and that connect to the bottle.py app.
 class Window(QWebView):
@@ -99,7 +106,7 @@ class Window(QWebView):
         QWebView.__init__(self)
         self.setWindowTitle('Detekt')
         self.resize(640, 500)
-        self.load(QUrl('http://localhost:31337/'))
+        self.load(QUrl('http://localhost:{0}/'.format(web_port)))
 
 def main():
     # Initiate the Qt application.
