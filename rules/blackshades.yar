@@ -2,7 +2,6 @@ rule BlackShades
 {
     meta:
         detection = "BlackShades RAT"
-        description = "This is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless."
 
     strings:
         $mod1 = /(m)odAPI/

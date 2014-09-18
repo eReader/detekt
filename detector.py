@@ -103,8 +103,7 @@ def scan(service_path, profile_name, queue_results):
 
             queue_results.put(dict(
                 rule=hit.rule,
-                detection=hit.meta.get('detection'),
-                description=hit.meta.get('description'),
+                detection=hit.meta.get('detection')
             ))
 
 def main(queue_results, queue_errors):

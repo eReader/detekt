@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="static/css/bootstrap.min.css">
 <link rel="stylesheet" href="static/css/bootflat.min.css">
 % if action == 'running':
-<meta http-equiv="refresh" content="5; URL=/check">
+    <meta http-equiv="refresh" content="5; URL=/check">
 % end
 </head>
 <body style="background-color: #f1f2f6;">
@@ -15,71 +15,92 @@
         </div>
 
         % if action == 'start':
-
             % if connection:
-            <div class="alert alert-warning"><strong>WARNING!</strong> You appear to be connected to the Internet. You should disconnect from any cable or wireless network during this test.</div>
+                <div class="alert alert-warning"><strong>WARNING!</strong> You appear to be connected to the Internet. You should disconnect from any cable or wireless network during this test.</div>
             % end
 
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><strong>What is this?</strong></h3>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong>What is this?</strong></h3>
+                </div>
+                <div class="panel-body">
+                    This is a simple tool that tries to identify potential spyware infections on your computer.
+                    When launched, it will try to look for certain indicators in memory. If you have any running applications (such as Skype, the browser, etc.) please close them in order to increase performance and decrease chances of false positives. The execution will take some minutes, so please be patient.
+                </div>
             </div>
-            <div class="panel-body">
-                This is a simple tool that tries to identify potential spyware infections on your computer.
-                When launched, it will try to look for certain indicators in memory. If you have any running applications (such as Skype, the browser, etc.) please close them in order to increase performance and decrease chances of false positives. The execution will take some minutes, so please be patient.
-            </div>
-        </div>
 
-        <p>
-            <a class="btn btn-lg btn-primary btn-block" href="/scan">Scan now!</a>
-        </p>
+            <p>
+                <a class="btn btn-lg btn-primary btn-block" href="/scan">Scan now!</a>
+            </p>
         % end
 
         % if action == 'running':
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><strong>Scanning...</strong></h3>
-            </div>
-            <div class="panel-body">
-                <p>The scanning is in progress. It might take several minutes, please be patient and do not interrupt the application before it has naturally finished.
-                <div class="progress progress-striped active">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong>Scanning...</strong></h3>
                 </div>
-                <p style="text-align: center;"><a href="/check">Refresh</a><br /><small>Should refresh automatically every 5 seconds</small></p>
+                <div class="panel-body">
+                    <p>The scanning is in progress. It might take several minutes, please be patient and do not interrupt the application before it has naturally finished.
+                    <div class="progress progress-striped active">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                    </div>
+                    <p style="text-align: center;"><a href="/check">Refresh</a><br /><small>Should refresh automatically every 5 seconds</small></p>
+                </div>
             </div>
-        </div>
         % end
 
         % if action == 'results':
             % if errors:
-            <div class="alert alert-warning">
-                <h4>WARNING!</h4>
-                 Some <strong>errors occurred</strong> that might have affected the outcome of the scan:
-                <ul>
-                    % for error in errors:
-                    <li>{{error}}</li>
-                    % end
-                </ul>
-            </div>
+                <div class="alert alert-warning">
+                    <h4>WARNING!</h4>
+                     Some <strong>errors occurred</strong> that might have affected the outcome of the scan:
+                    <ul>
+                        % for error in errors:
+                            <li>{{error}}</li>
+                        % end
+                    </ul>
+                </div>
             % else:
                 % if infected:
-                <div class="alert alert-danger">
-                    <h4>DANGER!</h4>
-                    <strong>I managed to identify the potential presence of some spyware!</strong> You should turn off this computer, never connect it again to the Internet or any external device and seek assistance.
-                </div>
+                    <div class="alert alert-danger">
+                        <h4>DANGER!</h4>
+                        <strong>I managed to identify the potential presence of some spyware!</strong> You should turn off this computer, never connect it again to the Internet or any external device and seek assistance.
+                    </div>
 
-                <p>Following is what I discovered:</p>
-                <ul>
-                    % for detection, description in results.items():
-                    <li><strong>{{detection}}</strong><br />{{description}}</li>
-                    % end
-                </ul>
+                    <p>Following is what I discovered:</p>
+                    <ul>
+                        % for detection, description in results.items():
+                            <li><strong>{{detection}}</strong><br />
+                            % if detection == 'BlackShades RAT':
+                                This is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless.
+                            
+                            % elif detection == 'DarkComet RAT':
+                                This is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless.
 
+                            % elif detection == 'FinFisher FinSpy':
+                                This is a very sophisticated backdoor produced by a German company and sold to government agencies worldwide. You might be targeted by yours or a foreign government. You should be really careful on your next steps in order to not further jeopardize your situation.
+
+                            % elif detection == 'Njrat':
+                                Njrat is a common off-the-shelf trojan which has recently gained popularity in the Middle-East.
+
+                            % elif detection == 'Hacking Team RCS Scout' or detection = 'Hacking Team RCS Backdoor':
+                                This is a very sophisticated backdoor produced by an Italian company and sold to government agencies worldwide. You might be targeted by yours or a foreign government. You should be really careful on your next steps in order to not further jeopardize your situation.
+
+                            % elif detection == 'ShadowTech RAT':
+                                ShawdowTech is a common RAT which is available for download for free on the Internet. It has been observed for example used in Syria against prominent figures of the opposition.
+
+                            % elif detection == 'Xtreme RAT':
+                                This is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless.
+
+                            % end
+                            </li>
+                        % end
+                    </ul>
                 % else:
-                <div class="alert alert-success">
-                    <h4>Looks good.</h4>
-                    I wasn't able to identify the presence of any obvious spyware. Please note that this does not necessarily mean your computer is clean. If you have strong suspicion of being targeted, please do seek assistance nevertheless.
-                </div>
+                    <div class="alert alert-success">
+                        <h4>Looks good.</h4>
+                        I wasn't able to identify the presence of any obvious spyware. Please note that this does not necessarily mean your computer is clean. If you have strong suspicion of being targeted, please do seek assistance nevertheless.
+                    </div>
                 % end
             % end
         % end

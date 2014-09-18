@@ -2,7 +2,6 @@ rule RCS_Scout
 {
     meta:
         detection = "Hacking Team RCS Scout"
-        description = "This is a very sophisticated backdoor produced by an Italian company and sold to government agencies worldwide. You might be targeted by yours or a foreign government. You should be really careful on your next steps in order to not further jeopardize your situation."
 
     strings:
         $format1 = /(%)02X%02X%02X%02X%c%c/
@@ -30,7 +29,6 @@ rule RCS_Backdoor
 {
     meta:
         detection = "Hacking Team RCS Backdoor"
-        description = "This is a very sophisticated backdoor produced by an Italian company and sold to government agencies worldwide. You might be targeted by yours or a foreign government. You should be really careful on your next steps in order to not further jeopardize your situation."
 
     strings:
         $debug1 = /\- Checking components/ wide ascii

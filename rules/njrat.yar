@@ -2,7 +2,6 @@ rule Njrat
 {
     meta:
         detection = "Njrat"
-        description = "Njrat is a common off-the-shelf trojan which has recently gained popularity in the Middle-East."
 
     strings:
         $string1 = /(F)romBase64String/
