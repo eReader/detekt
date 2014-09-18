@@ -78,12 +78,11 @@ class Config(object):
 
         # Check for supported version of Windows.
         if windows_release == 'XP':
-            if service_pack in ['SP2', 'SP3'] and self.architecture == 'x86':
+            if service_pack in ['SP1', 'SP2', 'SP3'] and self.architecture == 'x86':
                 self.profile = 'WinXP{0}{1}'.format(service_pack, self.architecture)
-        #elif windows_release == 'Vista':
-        #    if service_pack in ['SP0', 'SP1', 'SP2']:
-        #        self.profile = 'Vista{0}{1}'.format(service_pack, self.architecture)
-        #        return True
+        elif windows_release == 'Vista':
+            if service_pack in ['SP0', 'SP1', 'SP2']:
+                self.profile = 'Vista{0}{1}'.format(service_pack, self.architecture)
         elif windows_release == '7':
             if service_pack in ['SP0', 'SP1']:
                 self.profile = 'Win7{0}{1}'.format(service_pack, self.architecture)
@@ -103,6 +102,3 @@ class Config(object):
                 self.profile = 'Win8SP0{0}'.format(self.architecture)
         elif windows_release == '8.1':
             self.profile = 'Win8SP1{0}'.format(self.architecture)
-
-        # By now, if the function didn't return yet, it means we have an
-        # unsupported version of Windows.
