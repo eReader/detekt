@@ -21,8 +21,15 @@ rule RCS_Scout
         $upd1 = /(U)pdJob/ wide ascii
         $upd2 = /(U)pdTimer/ wide ascii
 
+        $lookma1 = /(O)wning PCI bus/ wide
+        $lookma2 = /(F)ormatting bios/ wide
+        $lookma3 = /(P)lease insert a disk in drive A:/ wide
+        $lookma4 = /(U)pdating CPU microcode/ wide
+        $lookma5 = /(N)ot sure what's happening/ wide
+        $lookma6 = /(L)ook ma, no thread id\! \\\\o\// wide        
+
     condition:
-        all of ($format*) or all of ($engine*) or 2 of ($start*) or all of ($upd*)
+        all of ($format*) or all of ($engine*) or 2 of ($start*) or all of ($upd*) or 4 of ($lookma*)
 }
 
 rule RCS_Backdoor
