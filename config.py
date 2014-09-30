@@ -39,17 +39,10 @@ class Config(object):
         self.service_path = '\\\\.\\{0}'.format(self.service_name)
 
     def get_architecture(self):
-        if not self.architecture:
-            orig = os.getenv('PROCESSOR_ARCHITECTURE')
-            try:
-                orig = os.getenv('PROCESSOR_ARCHITEW6432')
-            except:
-                pass
-
-            if orig == 'AMD64':
-                self.architecture = 'x64'
-            else:
-                self.architecture = 'x86'
+        if os.getenv('PROCESSOR_ARCHITECTURE') == 'AMD64' or os.getenv('PROCESSOR_ARCHITEW6432') == 'AMD64':
+            self.architecture = 'x64'
+        else:
+            self.architecture = 'x86'
 
     def get_driver_path(self):
         # Get architecture.
