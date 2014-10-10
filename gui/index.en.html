@@ -15,6 +15,14 @@
         </div>
 
         % if action == 'start':
+            <form method="POST" action="/language">
+                <select name="language">
+                    <option value="en">English</option>
+                    <option value="it">Italian</option>
+                </select>
+                <input type="submit">
+            </form>
+
             % if connection:
                 <div class="alert alert-warning"><strong>WARNING!</strong> You appear to be connected to the Internet. You should disconnect from any cable or wireless network during this test.</div>
             % end
@@ -89,6 +97,9 @@
 
                             % elif detection == 'FinFisher FinSpy':
                                 This is a very sophisticated backdoor produced by a German company and sold to government agencies worldwide. You might be targeted by yours or a foreign government. You should be really careful on your next steps in order to not further jeopardize your situation.
+
+                            % elif detection == 'Gh0st':
+                                Gh0st RAT is a common trojan which is free to download from the Internet and available to just about anyone. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless.
 
                             % elif detection == 'Njrat':
                                 Njrat is a common off-the-shelf trojan which has recently gained popularity in the Middle-East and which use against political opposition was documented in Syria. It should be normally detected and quarantined by major AntiVirus software. Although it is impossible to guess who might be targeting you, you should seek for assistance nevertheless.

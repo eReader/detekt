@@ -31,7 +31,7 @@ scanner = threading.Thread(target=detector.main, args=(queue_results, queue_erro
 scanner.daemon = True
 
 # Enabled language.
-language = 'en'
+lang = 'en'
 
 # Port for the web server.
 web_port = random.randint(1024, 65535)
@@ -45,21 +45,27 @@ def static(path):
 @webapp.route('/')
 def index():
     connection = check_connection()
-    return template('index.{0}'.format(language), action='start', connection=connection)
+    return template('index.{0}'.format(lang), action='start', connection=connection)
+
+@webapp.route('/language', method='POST')
+def language():
+    global lang
+    lang = request.forms.get('language')
+    redirect('/')
 
 # This route triggers the execution of the detector then returns the running
 # page which will then start refreshing to /check.
 @webapp.route('/scan')
 def scan():
     scanner.start()
-    return template('index.{0}'.format(language), action='running')
+    return template('index.{0}'.format(lang), action='running')
 
 # This route checks whether the scanner thread has finished, and if so it
 # will collect errors and results and return the results page.
 @webapp.route('/check')
 def check():
     if scanner.isAlive():
-        return template('index.{0}'.format(language), action='running')
+        return template('index.{0}'.format(lang), action='running')
     else:
         # Flag if the detector generated any matches.
         infected = False
@@ -88,7 +94,7 @@ def check():
             except Queue.Empty:
                 break
 
-        return template('index.{0}'.format(language), action='results', infected=infected,
+        return template('index.{0}'.format(lang), action='results', infected=infected,
                         errors=errors, results=results)
 
 # This thread will run the bottle.py web app. I should probably randomize
