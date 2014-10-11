@@ -45,7 +45,7 @@ def static(path):
 @webapp.route('/')
 def index():
     connection = check_connection()
-    return template('index.{0}'.format(lang), action='start', connection=connection)
+    return template('index.{0}'.format(lang), language=lang, action='start', connection=connection)
 
 @webapp.route('/language', method='POST')
 def language():

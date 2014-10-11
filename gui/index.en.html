@@ -15,13 +15,7 @@
         </div>
 
         % if action == 'start':
-            <form method="POST" action="/language">
-                <select name="language">
-                    <option value="en">English</option>
-                    <option value="it">Italian</option>
-                </select>
-                <input type="submit">
-            </form>
+            % include('languages.html', language=language)
 
             % if connection:
                 <div class="alert alert-warning"><strong>WARNING!</strong> You appear to be connected to the Internet. You should disconnect from any cable or wireless network during this test.</div>
