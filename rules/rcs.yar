@@ -4,9 +4,6 @@ rule RCS_Scout
         detection = "Hacking Team RCS Scout"
 
     strings:
-        $format1 = /(%)02X%02X%02X%02X%c%c/
-        $format2 = /(%)c%c%c%02X%02X%02X%02X/
-
         $engine1 = /(E)ngine started/ wide ascii
         $engine2 = /(R)unning in background/ wide ascii
         $engine3 = /(L)ocking doors/ wide ascii
@@ -29,7 +26,7 @@ rule RCS_Scout
         $lookma6 = /(L)ook ma, no thread id\! \\\\o\// wide        
 
     condition:
-        all of ($format*) or all of ($engine*) or 2 of ($start*) or all of ($upd*) or 4 of ($lookma*)
+        all of ($engine*) or all of ($start*) or all of ($upd*) or 4 of ($lookma*)
 }
 
 rule RCS_Backdoor
