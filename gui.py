@@ -15,7 +15,7 @@ from bottle import *
 from utils import get_resource, check_connection
 import detector
 
-# Add the gui folder to the template path of bottoe.py.
+# Add the gui folder to the template path of bottle.py.
 TEMPLATE_PATH.insert(0, get_resource('gui'))
 
 # Instatiate the Bottle application.
@@ -97,8 +97,7 @@ def check():
         return template('index.{0}'.format(lang), action='results', infected=infected,
                         errors=errors, results=results)
 
-# This thread will run the bottle.py web app. I should probably randomize
-# the port or make it configurable?
+# This thread will run the bottle.py web app.
 class WebApp(QThread):
     def __init__(self):
         QThread.__init__(self)
