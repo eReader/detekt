@@ -51,6 +51,10 @@ rule FinSpy
         $bootkit1 = /(b)ootkit_x32driver/
         $bootkit2 = /(b)ootkit_x64driver/
 
+        $typo1 = /(S)creenShort Recording/ wide
+
+        $mssounddx = /(S)ystem\\CurrentControlSet\\Services\\mssounddx/ wide
+
     condition:
-        8 of ($password*) or any of ($screenrec*) or any of ($keylogger*) or $micrec or any of ($skyperec*) or any of ($mouserec*) or $driver or any of ($janedow*) or any of ($versions*) or any of ($bootkit*)
+        8 of ($password*) or any of ($screenrec*) or any of ($keylogger*) or $micrec or any of ($skyperec*) or any of ($mouserec*) or $driver or any of ($janedow*) or any of ($versions*) or any of ($bootkit*) or $typo1 or $mssounddx
 }
