@@ -13,7 +13,6 @@ import volatility.addrspace as addrspace
 import volatility.utils as utils
 import volatility.plugins.malware.malfind as malfind
 from win32com.shell import shell
-import distorm3
 
 from abstracts import DetectorError
 from config import Config
