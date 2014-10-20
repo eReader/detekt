@@ -9,4 +9,10 @@
 # if hasattr(sys, '_MEIPASS'):
 #     _distorm_path = sys._MEIPASS
 
-datas = [ ("C:\python27\Lib\site-packages\distorm3\distorm3.dll", ''), ]
+import os
+import sys
+
+datas = []
+
+for path in sys.path:
+    datas.append((os.path.join(path, "distorm3", "distorm3.dll"), ""))

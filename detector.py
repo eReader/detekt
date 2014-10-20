@@ -13,6 +13,7 @@ import volatility.addrspace as addrspace
 import volatility.utils as utils
 import volatility.plugins.malware.malfind as malfind
 from win32com.shell import shell
+import distorm3
 
 from abstracts import DetectorError
 from config import Config
@@ -63,6 +64,12 @@ def scan(service_path, profile_name, queue_results):
 
     # Retrieve adress space.
     space = get_address_space(service_path, profile_name, yara_path)
+    if space == None:
+        log.info("Cannot generate address space")
+    else:
+        log.info("Address space: {0}, Base: {1}".format(space, space.base))
+        log.info("Profile: {0}, DTB: {1:#x}".format(space.profile, space.dtb))
+
     # Initialize Volatility's YaraScan module.
     yara = malfind.YaraScan(space.get_config())
 
