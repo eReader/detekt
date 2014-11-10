@@ -1,0 +1,125 @@
+<html>
+<head>
+<link rel="stylesheet" href="static/css/bootstrap.min.css">
+<link rel="stylesheet" href="static/css/bootflat.min.css">
+% if action == 'running':
+    <meta http-equiv="refresh" content="5; URL=/check">
+% end
+</head>
+<body style="background-color: #f1f2f6;">
+    <div class="container-fluid" dir="rtl">
+        <div class="row">
+            <div class="well">
+                <img src="static/logo.png" />
+            </div>
+        </div>
+
+        % if action == 'start':
+            % include('languages.html', language=language)
+
+            % if connection:
+                <div class="alert alert-warning"><strong>تحذير!</strong> يبدو أنك متصل بالانترنت. يجب عليك وقف الاتصال بأي شبكة واي فاي أو كابل أثناء الاختبار.</div>
+            % end
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong>ما هذا؟</strong></h3>
+                </div>
+                <div class="panel-body">
+                    هذه أداة بسيطة تحاول تحديد الإصابات المحتملة على الحاسوب ببرمجية تجسس. عند التشغيل ستقوم الأداة بالبحث من خلال مؤشرات محددة في الذاكرة. في حالة وجود أي تطبيقات تعمل (مثل المتصفح أو سكايب... إلى آخره) رجاء إغلاقهم من أجل زيادة الكفاءة وتقليل احتمالات التحديد الخاطئ. رجاء التحلي بالصبر حيث أن ألإجراء يأخذ بضعة دقائق.
+                </div>
+            </div>
+
+            <p>
+                <a class="btn btn-lg btn-primary btn-block" href="/scan">أفحص الآن!</a>
+            </p>
+        % end
+
+        % if action == 'running':
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong>جاري الفحص...</strong></h3>
+                </div>
+                <div class="panel-body">
+                    <p>الفحص جاري وقد يستغرق الأمر بضعة دقائق. رجاء التحلي بالصبر وعدم قاطعة التطبيق لحين الانتهاء بشكل طبيعي.
+                    <div class="progress progress-striped active">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                    </div>
+                    <p style="text-align: center;"><a href="/check">تحديث</a><br /><small>يتم التحديث تلقائيا كل 5 ثواني.</small></p>
+                </div>
+            </div>
+        % end
+
+        % if action == 'results':
+            % if errors:
+                <div class="alert alert-warning">
+                    <h4>تحذير!</h4>
+                    وقعت بعض <strong>الأخطاء</strong> وقد تؤثر على نتيجة الفحص:
+                    <ul>
+                        % for error in errors:
+                            % if error == 'NOT_AN_ADMIN':
+                                <li>يجب عليك تشغيل التطبيق كمدير النظام!</li>
+                            % elif error == 'UNSUPPORTED_WINDOWS':
+                                <li>ليدك إصدار مايكروسوفت ويندوز غير مدعمة.</li>
+                            % elif error == 'NO_DRIVER':
+                                <li>تعذر العثور على مشغّل للاستخدام.</li>
+                            % elif error == 'SERVICE_NO_START':
+                                <li>تعذر بدء الخدمة. حاول إعادة تشغيل التطبيق أو الحاسوب إذا لم ينجح الأمر.</li>
+                            % elif error == 'SCAN_FAILED':
+                                <li>لقد فشل إجراء الفحص، حاول إعادة تثبيت الأداة وإذا لم يفلح الأمر قم بإرسال ملف السجل إلي نقطة الاتصال الخاصة بك للتحقيق في المشكلة.</li>
+                            % end
+                        % end
+                    </ul>
+                </div>
+            % else:
+                % if infected:
+                    <div class="alert alert-danger">
+                        <h4>خطر!</h4>
+                        <strong>لقد تمكنت من تحديد احتمالية وجود بعض برمجيات التجسس!</strong> يجب عليك إغلاق هذا الحاسوب ولا تقم بتوصيله نهائيا بالانترنت أو بأي جهاز خارجي، وأبحث عن مساعدة.<br /><br />
+                        يمكنك الوصول إلي إرشادات إضافية حول الخطوات اللاحقة وكيفية التواصل معنا من خلال <b>https://www.resistsurveillance.org/emergency</b>
+                    </div>
+
+                    <p>فيما يلي ما قمت باكتشافه:</p>
+                    <ul>
+                        % for detection in results:
+                            <li><strong>{{detection}}</strong><br />
+                            % if detection == 'BlackShades RAT':
+                                هذه برمجية خبيثة شائعة ومتاحة للتنزيل المجاني من على الانترنت لأي شخص. يتوجب على مضادات الفيروسات الكبيرة ضبطها ووضعها في الحجر. على الرغم من استحالة تخمين من قد يحاول استهدافك إلا انه يتبعن عليك طلب المساعدة.
+                            
+                            % elif detection == 'DarkComet RAT':
+                                هذه برمجية خبيثة شائعة ومتاحة للتنزيل المجاني من على الانترنت لأي شخص. يتوجب على مضادات الفيروسات الكبيرة ضبطها ووضعها في الحجر. على الرغم من استحالة تخمين من قد يحاول استهدافك إلا انه يتبعن عليك طلب المساعدة.
+
+                            % elif detection == 'FinFisher FinSpy':
+                                هذه بوابة خفية متطورة جدا، وتم إنتاجها بواسطة شركة ألمانية وبيعها إلي وكالات حكومية حول العالم. من المحتمل أن تكون مستهدف بواسطة حكومتك أو حكومة أجنبية. يتعين عليك توخي الحذر الشديد في خطواتك التالية حتى لا تعرض نفسك لمزيد من الخطر.
+
+                            % elif detection == 'Gh0st':
+                                هذه برمجية خبيثة شائعة ومتاحة للتنزيل المجاني من على الانترنت لأي شخص. يتوجب على مضادات الفيروسات الكبيرة ضبطها ووضعها في الحجر. على الرغم من استحالة تخمين من قد يحاول استهدافك إلا انه يتبعن عليك طلب المساعدة.
+
+                            % elif detection == 'Njrat':
+                                هذه برمجية خبيثة شائعة ومتاحة للتنزيل المجاني من على الانترنت لأي شخص. يتوجب على مضادات الفيروسات الكبيرة ضبطها ووضعها في الحجر. على الرغم من استحالة تخمين من قد يحاول استهدافك إلا انه يتبعن عليك طلب المساعدة.
+
+                            % elif detection == 'Hacking Team RCS Scout' or detection == 'Hacking Team RCS Backdoor':
+                                هذه بوابة خفية متطورة جدا، وتم إنتاجها بواسطة شركة إيطالية وبيعها إلي وكالات حكومية حول العالم. من المحتمل أن تكون مستهدف بواسطة حكومتك أو حكومة أجنبية. يتعين عليك توخي الحذر الشديد في خطواتك التالية حتى لا تعرض نفسك لمزيد من الخطر.
+
+                            % elif detection == 'ShadowTech RAT':
+                                هذه برمجية خبيثة شائعة ومتاحة للتنزيل المجاني من على الانترنت لأي شخص. يتوجب على مضادات الفيروسات الكبيرة ضبطها ووضعها في الحجر. على الرغم من استحالة تخمين من قد يحاول استهدافك إلا انه يتبعن عليك طلب المساعدة.
+
+                            % elif detection == 'Xtreme RAT':
+                                هذه برمجية خبيثة شائعة ومتاحة للتنزيل المجاني من على الانترنت لأي شخص. يتوجب على مضادات الفيروسات الكبيرة ضبطها ووضعها في الحجر. على الرغم من استحالة تخمين من قد يحاول استهدافك إلا انه يتبعن عليك طلب المساعدة.
+
+                            % end
+                            </li>
+                        % end
+                    </ul>
+                % else:
+                    <div class="alert alert-success">
+                        <h4>يبدو جيدا.</h4>
+                        لم أتمكن من تحديد وجود برمجية تجسس. رجاء الملاحظة أن هذا لا يعني بالضرورة أن الحاسوب غير مصاب. إذا كان لديك شكوك قوية في استهدافك رجاء القيام بطلب المساعدة.<br /><br />
+                        يمكنك الوصول إلي إرشادات إضافية من خلال: <b>https://www.resistsurveillance.org/emergency</b>
+                    </div>
+                % end
+            % end
+        % end
+    </div>
+</body>
+</html>
