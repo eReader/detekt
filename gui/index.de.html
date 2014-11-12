@@ -1,0 +1,125 @@
+<html>
+<head>
+<link rel="stylesheet" href="static/css/bootstrap.min.css">
+<link rel="stylesheet" href="static/css/bootflat.min.css">
+% if action == 'running':
+    <meta http-equiv="refresh" content="5; URL=/check">
+% end
+</head>
+<body style="background-color: #f1f2f6;">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="well">
+                <img src="static/logo.png" />
+            </div>
+        </div>
+
+        % if action == 'start':
+            % include('languages.html', language=language)
+
+            % if connection:
+                <div class="alert alert-warning"><strong>ACHTUNG!</strong> Du scheint mit dem Internet verbunden zu sein. Du solltest während des Tests sämtliche Kabel- und Drahtlos-Verbindungen trennen.</div>
+            % end
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong>Was ist das?</strong></h3>
+                </div>
+                <div class="panel-body">
+                    Dies ist ein einfaches Tool, das versucht, mögliche Spyware-Infektionen auf deinem Computer zu finden. Sobald du es startest, wird es auf deiner Festplatte nach bestimmten Anzeichen dafür suchen. Bitte schließe währenddessen alle laufenden Prozesse (zum Beispiel Skype, deinen Browser, usw.), damit die Anwendung bestmöglich läuft und die Chancen auf Falschmeldungen verringert werden. Die Ausführung kann einige Minuten dauern. Bitte habe Geduld.
+                </div>
+            </div>
+
+            <p>
+                <a class="btn btn-lg btn-primary btn-block" href="/scan">Jetzt scannen!</a>
+            </p>
+        % end
+
+        % if action == 'running':
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong>Scannen...</strong></h3>
+                </div>
+                <div class="panel-body">
+                    <p>Es wird gescannt. Dies kann einige Minuten dauern. Bitte habe etwas Geduld und unterbreche die Anwendung nicht, bevor sie fertig ist.
+                    <div class="progress progress-striped active">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                    </div>
+                    <p style="text-align: center;"><a href="/check">Aktualisieren</a><br /><small>Sollte sich alle 5 Sekunden automatisch aktualisieren.</small></p>
+                </div>
+            </div>
+        % end
+
+        % if action == 'results':
+            % if errors:
+                <div class="alert alert-warning">
+                    <h4>ACHTUNG!</h4>
+                    Es sind <strong>Fehler</strong>aufgetreten, die das Ergebnis des Scans beeinflusst haben können:
+                    <ul>
+                        % for error in errors:
+                            % if error == 'NOT_AN_ADMIN':
+                                <li>Du musst die Anwendung als Administrator ausführen!</li>
+                            % elif error == 'UNSUPPORTED_WINDOWS':
+                                <li>Du benutzt eine nicht unterstützte Version von Microsoft Windows.</li>
+                            % elif error == 'NO_DRIVER':
+                                <li>Kann keinen passenden Treiber für die Benutzung finden.</li>
+                            % elif error == 'SERVICE_NO_START':
+                                <li>Kann den Dienst nicht starten. Versuche, die Anwendung neu zu starten. Wenn das nicht hilft, starte deinen Computer neu.</li>
+                            % elif error == 'SCAN_FAILED':
+                                <li>Scan fehlgeschlagen. Versuche das Tool neu zu installieren. Wenn das nicht hilft, stelle deinem Ansprechpartner die Protokolldatei zur Verfügung, damit er das Problem weiter untersuchen kann.</li>
+                            % end
+                        % end
+                    </ul>
+                </div>
+            % else:
+                % if infected:
+                    <div class="alert alert-danger">
+                        <h4>GEFAHR!</h4>
+                        <strong>Ich habe mögliche Spyware identifiziert!</strong> Du solltest den Computer ausschalten und ihn nie mehr mit dem Internet oder externen Geräten verbinden und dir Hilfe suchen.<br /><br />
+                        Weitere Anleitungen, was du als Nächstes tun solltest und wie du uns kontaktieren kannst, findest du unter <b>https://www.resistsurveillance.org/emergency</b>
+                    </div>
+
+                    <p>Ich habe Folgendes entdeckt:</p>
+                    <ul>
+                        % for detection in results:
+                            <li><strong>{{detection}}</strong><br />
+                            % if detection == 'BlackShades RAT':
+                                Dies ist ein gewöhnlicher Trojaner, den sich jeder einfach im Internet einfangen kann. Normalerweise sollte er von einem Großteil der Antivirus-Software entdeckt und in Quarantäne gesteckt werden. Obwohl es unmöglich ist, herauszufinden, wer es auf dich abgesehen hat, solltest du dir Hilfe suchen.
+                            
+                            % elif detection == 'DarkComet RAT':
+                                Dies ist ein gewöhnlicher Trojaner, den sich jeder einfach im Internet einfangen kann. Normalerweise sollte er von einem Großteil der Antivirus-Software entdeckt und in Quarantäne gesteckt werden. Obwohl es unmöglich ist, herauszufinden, wer es auf dich abgesehen hat, solltest du dir Hilfe suchen.
+
+                            % elif detection == 'FinFisher FinSpy':
+                                Dies ist eine sehr ausgeklügelte Backdoor, die von einem deutschen Unternehmen entwickelt und weltweit an Regierungsbehörden verkauft wird. Du könntest von deiner oder einer ausländischen Regierung beobachtet werden. Du solltest deine nächsten Schritte sorgfältig wählen, um deine Situation nicht weiter zu verschlimmern.
+
+                            % elif detection == 'Gh0st':
+                                Dies ist ein gewöhnlicher Trojaner, den sich jeder einfach im Internet einfangen kann. Normalerweise sollte er von einem Großteil der Antivirus-Software entdeckt und in Quarantäne gesteckt werden. Obwohl es unmöglich ist, herauszufinden, wer es auf dich abgesehen hat, solltest du dir Hilfe suchen.
+
+                            % elif detection == 'Njrat':
+                                Dies ist ein gewöhnlicher Trojaner, den sich jeder einfach im Internet einfangen kann. Normalerweise sollte er von einem Großteil der Antivirus-Software entdeckt und in Quarantäne gesteckt werden. Obwohl es unmöglich ist, herauszufinden, wer es auf dich abgesehen hat, solltest du dir Hilfe suchen.
+
+                            % elif detection == 'Hacking Team RCS Scout' or detection == 'Hacking Team RCS Backdoor':
+                                Dies ist eine sehr ausgeklügelte Backdoor, die von einem italienischen Unternehmen entwickelt und weltweit an Regierungsbehörden verkauft wird. Du könntest von deiner oder einer ausländischen Regierung beobachtet werden. Du solltest deine nächsten Schritte sorgfältig wählen, um deine Situation nicht weiter zu verschlimmern.
+
+                            % elif detection == 'ShadowTech RAT':
+                                Dies ist ein gewöhnlicher Trojaner, den sich jeder einfach im Internet einfangen kann. Normalerweise sollte er von einem Großteil der Antivirus-Software entdeckt und in Quarantäne gesteckt werden. Obwohl es unmöglich ist, herauszufinden, wer es auf dich abgesehen hat, solltest du dir Hilfe suchen.
+
+                            % elif detection == 'Xtreme RAT':
+                                Dies ist ein gewöhnlicher Trojaner, den sich jeder einfach im Internet einfangen kann. Normalerweise sollte er von einem Großteil der Antivirus-Software entdeckt und in Quarantäne gesteckt werden. Obwohl es unmöglich ist, herauszufinden, wer es auf dich abgesehen hat, solltest du dir Hilfe suchen.
+
+                            % end
+                            </li>
+                        % end
+                    </ul>
+                % else:
+                    <div class="alert alert-success">
+                        <h4>Sieht gut aus.</h4>
+                        Ich habe es nicht geschafft, Spyware zu erkennen. Bitte bedenke, dass das nicht notwendiger Weise heißt, dass dein Computer einwandfrei ist. Wenn du einen starken Verdacht hast, dass du überwacht wirst, bitte suche dir Hilfe.<br /><br />
+                        Weitere Anleitungen findest du unter <b>https://www.resistsurveillance.org/emergency</b>
+                    </div>
+                % end
+            % end
+        % end
+    </div>
+</body>
+</html>
