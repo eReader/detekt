@@ -26,7 +26,7 @@ logging.getLogger('volatility.utils').setLevel(logging.ERROR)
 # Configure logging for our main application.
 log = logging.getLogger('detector')
 log.propagate = 0
-fh = logging.FileHandler(os.path.join(os.getcwd(), 'detector.log'))
+fh = logging.FileHandler(os.path.join(os.getcwd(), 'detekt.log'))
 sh = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 fh.setFormatter(formatter)
