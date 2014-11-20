@@ -19,5 +19,5 @@ rule Xtreme
         $unit8 = /(U)nitInjectProcess/ wide ascii
 
     condition:
-        any of ($string*) or 3 of ($unit*)
+        5 of them
 }
